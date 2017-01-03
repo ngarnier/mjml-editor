@@ -15,6 +15,7 @@ import {
 } from 'immutable'
 
 import IconAdd from 'icons/Add'
+import IconHtml from 'icons/Html'
 import IconProgramming from 'icons/Programming'
 import IconRemove from 'icons/Remove'
 
@@ -177,6 +178,8 @@ class Editor extends Component {
         newActiveTab = null
       }
     }
+
+    delete this._history[id]
 
     this.setState({
       activeTab: newActiveTab,
@@ -341,59 +344,79 @@ class Editor extends Component {
 
     return (
       <div className="Editor">
-        <div className="Editor-Left">
-          <div className="Tabs">
+        <div className="Tabs">
+          <div
+            className="Tab Tab--float"
+            onClick={this.handleTabAdd}
+          >
+            <IconAdd />
+          </div>
+          { content.map(item => (
             <div
-              className="Tab Tab--float"
-              onClick={this.handleTabAdd}
+              className={cx('Tab', {
+                'Tab--active': item.get('id') === activeTab,
+              })}
+              key={item.get('id')}
+              onClick={this.handleTabChange.bind(this, item.get('id'))}
             >
-              <IconAdd />
-            </div>
-            { content.map(item => (
+              {item.get('name')}
               <div
-                className={cx('Tab', {
-                  'Tab--active': item.get('id') === activeTab,
-                })}
-                key={item.get('id')}
-                onClick={this.handleTabChange.bind(this, item.get('id'))}
+                className="Tab-Remove"
+                onClick={this.handleTabRemove.bind(this, item.get('id'))}
               >
-                {item.get('name')}
-                <div
-                  className="Tab-Remove"
-                  onClick={this.handleTabRemove.bind(this, item.get('id'))}
-                >
-                  <IconRemove />
-                </div>
+                <IconRemove />
               </div>
-            )) }
-          </div>
-          <div className="Editor-CodeMirror">
-            <textarea
-              ref={r => this.textarea = r}
-            />
-            { !showEditor &&
-              <div className="Editor-Empty">
-                <IconProgramming />
-              </div> }
-          </div>
-          { showEditor &&
-            <Footer
-              items={[ {
-                children: cursor !== null && `${cursor.line + 1}:${cursor.ch + 1}`
-              } ]}
-            /> }
+            </div>
+          )) }
         </div>
-        <div className="Editor-Right">
-          <div className="Preview">
-            <iframe ref={r => this.iframe = r} />
-            <Footer
-              align="right"
-              items={[ {
-                children: preview && `Time for render: ${preview.executionTime}ms`
-              }, {
-                children: preview && `Last render: ${new Date(preview.lastRender)}`
-              } ]}
-            />
+        <div className="Editor-Content">
+          <div className="Editor-Left">
+            <div className="Editor-CodeMirror">
+              <textarea
+                ref={r => this.textarea = r}
+              />
+              { !showEditor &&
+                <div className="Editor-Empty">
+                  <div>
+                    <IconProgramming />
+                    ¯\_(ツ)_/¯
+                  </div>
+                </div> }
+            </div>
+            { showEditor &&
+              <Footer
+                items={[ {
+                  children: cursor !== null && `${cursor.line + 1}:${cursor.ch + 1}`
+                } ]}
+              /> }
+          </div>
+          <div className="Editor-Right">
+            <div className="Preview">
+              <div className="Preview-Iframe">
+                <iframe
+                  ref={r => this.iframe = r}
+                  style={{
+                    display: preview ? 'block' : 'none',
+                  }}
+                />
+                { !preview &&
+                  <div className="Editor-Empty">
+                    <div>
+                      <IconHtml />
+                      ಠ_ಠ
+                    </div>
+                  </div> }
+              </div>
+              { preview &&
+                <Footer
+                  align="right"
+                  items={[ {
+                    children: preview && `Time for render: ${preview.executionTime}ms`
+                  }, {
+                    children: preview && `Last render: ${new Date(preview.lastRender)}`
+                  } ]}
+                /> }
+            </div>
           </div>
         </div>
       </div>

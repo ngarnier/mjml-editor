@@ -19,6 +19,6 @@ server.use(bodyParser.urlencoded({
 server.use('/api', api)
 server.use(render)
 
-server.listen(3333, err => {
+server.listen(3333, '127.0.0.1', err => {
   console.log(`[APP] listening`)
 })

@@ -9,6 +9,8 @@ import {
 
 import Editor from 'pages/Editor'
 
+import IconMjml from 'icons/Mjml'
+
 import './styles.scss'
 
 class Application extends Component {
@@ -17,7 +19,9 @@ class Application extends Component {
     return (
       <div className="Application">
         <div className="Application-Header">
-
+          <div className="Application-Header-Logo">
+            <IconMjml />
+          </div>
         </div>
         <Match
           component={Editor}

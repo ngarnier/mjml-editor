@@ -29,7 +29,7 @@
     }
 
     .CodeMirror {
-      background-color: hsl(220, 13%, 18%);
+      background-color: #282c34;
       height: 100%;
       width: 100%;
     }
@@ -37,7 +37,7 @@
 
   &-Empty {
     align-items: center;
-    background-color: hsl(220, 13%, 18%);
+    background-color: #282c34;
     color: #d7dae0;
     cursor: default;
     display: flex;

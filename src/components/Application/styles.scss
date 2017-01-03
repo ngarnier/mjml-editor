@@ -9,20 +9,25 @@ body {
 }
 
 .Application {
-  &-Header,
-  &-Footer {
-    background-color: red;
-    height: 50px;
-    position: fixed;
-    left: 0;
-    right: 0;
-  }
-
   &-Header {
+    align-items: center;
+    background-color: #282c34;
+    border-bottom: 1px solid #181a1f;
+    display: flex;
+    height: 50px;
+    left: 0;
+    position: fixed;
+    right: 0;
     top: 0;
-  }
 
-  &-Footer {
-    bottom: 0;
+    &-Logo {
+      margin-left: 10px;
+
+      svg {
+        fill: #d7dae0;
+        height: 30px;
+        width: 93px;
+      }
+    }
   }
 }

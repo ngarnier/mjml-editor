@@ -1,4 +1,5 @@
 import express from 'express'
+import filesize from 'filesize'
 import {
   mjml2html,
 } from 'mjml'
@@ -22,6 +23,7 @@ router.post('/mjml2html', (req, res) => {
     executionTime: hEnd[1] / 1e6,
     html,
     lastRender: Date.now(),
+    size: filesize(Buffer.byteLength(html)),
   })
 })
 

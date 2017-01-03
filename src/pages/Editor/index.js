@@ -411,9 +411,11 @@ class Editor extends Component {
                 <Footer
                   align="right"
                   items={[ {
-                    children: preview && `Time for render: ${preview.executionTime}ms`
+                    children: `Html size: ${preview.size}`
                   }, {
-                    children: preview && `Last render: ${new Date(preview.lastRender)}`
+                    children: `Time for render: ${preview.executionTime}ms`
+                  }, {
+                    children: `Last render: ${new Date(preview.lastRender)}`
                   } ]}
                 /> }
             </div>

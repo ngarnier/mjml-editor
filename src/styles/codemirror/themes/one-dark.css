@@ -27,6 +27,7 @@
   background-color: hsl(220, 13%, 18%);
 }
 .cm-s-one-dark .CodeMirror-gutters {
+  background: transparent;
   border-right: 0;
 }
 .cm-s-one-dark .CodeMirror-linenumber {

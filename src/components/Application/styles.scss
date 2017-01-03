@@ -1,0 +1,28 @@
+@import "~ress";
+
+html {
+  overflow: hidden;
+}
+
+body {
+  font-family: Helvetica;
+}
+
+.Application {
+  &-Header,
+  &-Footer {
+    background-color: red;
+    height: 50px;
+    position: fixed;
+    left: 0;
+    right: 0;
+  }
+
+  &-Header {
+    top: 0;
+  }
+
+  &-Footer {
+    bottom: 0;
+  }
+}

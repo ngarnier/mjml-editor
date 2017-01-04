@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon index.js"
+    "build": "webpack --config webpack/build.config.babel.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "start": "cross-env NODE_ENV=production node index.js"
   },
   "dependencies": {
     "axios": "^0.15.3",
@@ -42,12 +44,14 @@
     "node-sass": "^4.1.1",
     "nodemon": "^1.11.0",
     "postcss-loader": "^1.2.1",
+    "progress-bar-webpack-plugin": "^1.9.2",
     "react-hot-loader": "^3.0.0-beta.6",
     "sass-loader": "^4.1.1",
     "style-loader": "^0.13.1",
     "webpack": "2.2.0-rc.3",
     "webpack-dev-middleware": "^1.9.0",
     "webpack-hot-middleware": "^2.14.0",
-    "webpack-merge": "^2.0.0"
+    "webpack-merge": "^2.0.0",
+    "webpack-stats-plugin": "^0.1.4"
   }
 }

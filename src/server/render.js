@@ -12,6 +12,10 @@ import {
 import Application from 'components/Application'
 import Html from 'components/Html'
 
+const stats = process.env.NODE_ENV === 'production'
+  ? require(`${process.cwd()}/dist/stats.json`)
+  : {}
+
 export default async function render (req, res) {
   try {
     const context = createServerRenderContext()
@@ -37,7 +41,7 @@ export default async function render (req, res) {
             <Application />
           </ServerRouter>
         )}
-        stats={{}}
+        stats={stats}
       />
     )
 

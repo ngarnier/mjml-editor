@@ -1,8 +1,13 @@
 import React from 'react'
 
-const Html = ({ content, stats: { main = 'bundle.js' } }) => (
+const Html = ({ content, stats: { styles, main = 'bundle.js' } }) => (
   <html>
     <head>
+      { styles &&
+        <link
+          href={`/dist/${styles}`}
+          rel="stylesheet"
+        /> }
     </head>
     <body>
       <div

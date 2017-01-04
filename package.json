@@ -2,6 +2,7 @@
   "scripts": {
     "build": "webpack --config webpack/build.config.babel.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "heroku-postbuild": "NODE_ENV=production npm run build",
     "start": "cross-env NODE_ENV=production node index.js"
   },
   "dependencies": {

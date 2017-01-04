@@ -12,13 +12,16 @@ body {
   &-Header {
     align-items: center;
     background-color: #282c34;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
     border-bottom: 1px solid #181a1f;
     display: flex;
+    flex: 1;
     height: 50px;
     left: 0;
     position: fixed;
     right: 0;
     top: 0;
+    z-index: 1;
 
     &-Logo {
       margin-left: 10px;

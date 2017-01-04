@@ -5,9 +5,17 @@ import {
 } from 'react-dom/server'
 
 import {
+  createStore,
+} from 'redux'
+import {
+  Provider,
+} from 'react-redux'
+import {
   createServerRenderContext,
   ServerRouter,
 } from 'react-router'
+
+import reducers from 'reducers'
 
 import Application from 'components/Application'
 import Html from 'components/Html'
@@ -31,16 +39,29 @@ export default async function render (req, res) {
       res.status(404)
     }
 
+    const store = createStore(reducers, {
+      user: req.user
+        ? req.user._json
+        : null,
+    })
+
+    const content = renderToString(
+      <Provider
+        store={store}
+      >
+        <ServerRouter
+          context={context}
+          location={req.url}
+        >
+          <Application />
+        </ServerRouter>
+      </Provider>
+    )
+
     const markup = renderToStaticMarkup(
       <Html
-        content={renderToString(
-          <ServerRouter
-            context={context}
-            location={req.url}
-          >
-            <Application />
-          </ServerRouter>
-        )}
+        content={content}
+        state={store.getState()}
         stats={stats}
       />
     )

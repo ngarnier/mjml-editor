@@ -14,10 +14,16 @@ import {
   Map,
 } from 'immutable'
 
+import {
+  Tabs,
+  Tab,
+} from 'components/Tabs'
+import Empty from 'components/Empty'
+import Footer from 'components/Footer'
+import Preview from 'components/Preview'
+
 import IconAdd from 'icons/Add'
-import IconHtml from 'icons/Html'
 import IconProgramming from 'icons/Programming'
-import IconRemove from 'icons/Remove'
 
 let CodeMirror
 
@@ -38,7 +44,6 @@ class Editor extends Component {
 
   _history = {}
   _request = null
-  _renderIframe = true
 
   static defaultProps = {
     content: [],
@@ -53,11 +58,15 @@ class Editor extends Component {
     }))
 
     this.state = {
-      activeTab: props.activeTab || content.length > 0 ? content[0].id : null,
+      activeTab: props.activeTab || content.length > 0
+        ? content[0].id
+        : null,
       content: fromJS(content),
       cursor: null,
       preview: {},
-      showEditor: content.length > 0 ? true : false,
+      showEditor: content.length > 0
+        ? true
+        : false,
     }
   }
 
@@ -99,17 +108,6 @@ class Editor extends Component {
       showEditor,
     } = this.state
 
-    const preview = this.getCurentPreview()
-
-    if (preview && this._renderIframe) {
-      this._renderIframe = false
-
-      const doc = this.iframe.contentDocument
-      const documentElement = doc.documentElement
-
-      documentElement.innerHTML = preview.html
-    }
-
     if (showEditor &&
         activeTab !== prevState.activeTab) {
       this.changeTab()
@@ -149,7 +147,7 @@ class Editor extends Component {
         Map({
           id,
           name: 'untitled',
-          value: ''
+          value: '',
         })
       ),
       showEditor: true,
@@ -171,9 +169,9 @@ class Editor extends Component {
 
     if (activeTab === id) {
       if (newContent.size > 0) {
-        newActiveTab = index - 1 < 0 ?
-          newContent.get(0).get('id') :
-          newContent.get(index - 1).get('id')
+        newActiveTab = index - 1 < 0
+          ? newContent.get(0).get('id')
+          : newContent.get(index - 1).get('id')
       } else {
         newActiveTab = null
       }
@@ -184,7 +182,9 @@ class Editor extends Component {
     this.setState({
       activeTab: newActiveTab,
       content: newContent,
-      showEditor: newActiveTab === null ? false : true,
+      showEditor: newActiveTab === null
+        ? false
+        : true,
     })
   }
 
@@ -316,8 +316,6 @@ class Editor extends Component {
 
       preview[activeTab] = data
 
-      this._renderIframe = true
-
       this.setState(prev => ({
         preview,
       }))
@@ -340,116 +338,56 @@ class Editor extends Component {
       showEditor,
     } = this.state
 
-    const preview = this.getCurentPreview()
-
     return (
       <div className="Editor">
-        <div className="Tabs">
-          <div
-            className="Tab Tab--float"
+        <Tabs>
+          <Tab
+            float={true}
             onClick={this.handleTabAdd}
+            remove={false}
           >
             <IconAdd />
-          </div>
+          </Tab>
           { content.map(item => (
-            <div
-              className={cx('Tab', {
-                'Tab--active': item.get('id') === activeTab,
-              })}
+            <Tab
+              active={item.get('id') === activeTab}
               key={item.get('id')}
               onClick={this.handleTabChange.bind(this, item.get('id'))}
+              onRemove={this.handleTabRemove.bind(this, item.get('id'))}
             >
               {item.get('name')}
-              <div
-                className="Tab-Remove"
-                onClick={this.handleTabRemove.bind(this, item.get('id'))}
-              >
-                <IconRemove />
-              </div>
-            </div>
+            </Tab>
           )) }
-        </div>
-        <div className="Editor-Content">
+        </Tabs>
+        <div className="Editor-Wrapper">
           <div className="Editor-Left">
             <div className="Editor-CodeMirror">
               <textarea
                 ref={r => this.textarea = r}
               />
               { !showEditor &&
-                <div className="Editor-Empty">
-                  <div>
-                    <IconProgramming />
-                    ¯\_(ツ)_/¯
-                  </div>
-                </div> }
+                <Empty>
+                  <IconProgramming />
+                  ¯\_(ツ)_/¯
+                </Empty> }
             </div>
             { showEditor &&
+              cursor !== null &&
               <Footer
-                items={[ {
-                  children: cursor !== null && `${cursor.line + 1}:${cursor.ch + 1}`
-                } ]}
+                items={[
+                  `${cursor.line + 1}:${cursor.ch + 1}`,
+                ]}
               /> }
           </div>
           <div className="Editor-Right">
-            <div className="Preview">
-              <div className="Preview-Iframe">
-                <iframe
-                  ref={r => this.iframe = r}
-                  style={{
-                    display: preview ? 'block' : 'none',
-                  }}
-                />
-                { !preview &&
-                  <div className="Editor-Empty">
-                    <div>
-                      <IconHtml />
-                      ಠ_ಠ
-                    </div>
-                  </div> }
-              </div>
-              { preview &&
-                <Footer
-                  align="right"
-                  items={[ {
-                    children: `Html size: ${preview.size}`
-                  }, {
-                    children: `Time for render: ${preview.executionTime}ms`
-                  }, {
-                    children: `Last render: ${new Date(preview.lastRender)}`
-                  } ]}
-                /> }
-            </div>
+            <Preview
+              preview={this.getCurentPreview()}
+            />
           </div>
         </div>
       </div>
     )
   }
-
-}
-
-const Footer = props => {
-
-  const {
-    items,
-    align = 'left',
-  } = props
-
-  return (
-    <div
-      className={cx('Editor-Footer', {
-        [`Editor-Footer--align-${align}`]: true,
-      })}
-    >
-      { map(items, (item, index) => (
-        <div
-          className="Editor-Footer-Item"
-          key={index}
-        >
-          {item.children}
-        </div>
-      )) }
-    </div>
-  )
 
 }
 

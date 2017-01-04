@@ -8,19 +8,21 @@ import {
 import {
   Provider,
 } from 'react-redux'
-import thunk from 'redux-thunk'
-
 import {
   BrowserRouter,
 } from 'react-router'
 
-const store = createStore(applyMiddleware(thunk))
+import reducers from 'reducers'
+
+const store = createStore(reducers, window.__INITIAL_STATE__)
 
 const roolEl = document.getElementById('root')
 
 function render (Component) {
   ReactDOM.render(
-    <Provider store={store}>
+    <Provider
+      store={store}
+    >
       <BrowserRouter>
         <Component />
       </BrowserRouter>

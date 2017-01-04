@@ -1,0 +1,28 @@
+.Empty {
+  align-items: center;
+  background-color: #282c34;
+  color: #d7dae0;
+  cursor: default;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  width: 100%;
+
+  div {
+    opacity: .2;
+  }
+
+  svg {
+    display: block;
+    height: 150px;
+    width: 150px;
+
+
+    g,
+    path {
+      fill: #d7dae0;
+    }
+  }
+}

@@ -7,7 +7,9 @@ import {
   Match,
 } from 'react-router'
 
-import Editor from 'pages/Editor'
+import Home from 'pages/Home'
+
+import Auth from 'components/Auth'
 
 import IconMjml from 'icons/Mjml'
 
@@ -22,9 +24,10 @@ class Application extends Component {
           <div className="Application-Header-Logo">
             <IconMjml />
           </div>
+          <Auth />
         </div>
         <Match
-          component={Editor}
+          component={Home}
           exactly={true}
           pattern="/"
         />

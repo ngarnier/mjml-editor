@@ -1,0 +1,24 @@
+.Dropdown {
+  background-color: #21252b;
+  border-radius: 3px;
+  border: 1px solid #181a1f;
+  min-width: 200px;
+  position: absolute;
+  top: 0;
+
+  &:before {
+    border: 8px solid transparent;
+    border-bottom-color: #181a1f;
+    content: "";
+    display: inline-block;
+    position: absolute;
+    right: 5px;
+    top: -16px;
+  }
+
+  &-Item {
+    background-color: #282c34;
+    width: 100%;
+    padding: 10px;
+  }
+}

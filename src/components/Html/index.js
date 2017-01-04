@@ -1,8 +1,11 @@
 import React from 'react'
 
-const Html = ({ content, stats: { styles, main = 'bundle.js' } }) => (
+const Html = ({ content, state, stats: { styles, main = 'bundle.js' } }) => (
   <html>
     <head>
+      <title>
+        MJML Editor
+      </title>
       { styles &&
         <link
           href={`/dist/${styles}`}
@@ -14,7 +17,14 @@ const Html = ({ content, stats: { styles, main = 'bundle.js' } }) => (
         dangerouslySetInnerHTML={{ __html: content }}
         id="root"
       />
-      <script src={`/dist/${main}`} />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `window.__INITIAL_STATE__ = ${JSON.stringify(state)}`,
+        }}
+      />
+      <script
+        src={`/dist/${main}`}
+      />
     </body>
   </html>
 )

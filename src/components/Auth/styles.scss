@@ -1,0 +1,43 @@
+.Auth {
+  color: #d7dae0;
+  display: flex;
+  font-size: 13px;
+  justify-content: flex-end;
+  padding: 0 10px;
+  position: relative;
+  width: 100%;
+
+  &-Signin {
+    a {
+      align-items: center;
+      color: #d7dae0;
+      cursor: pointer;
+      display: flex;
+      text-decoration: none;
+    }
+
+    svg {
+      fill: #d7dae0;
+      margin-left: 10px;
+      height: 30px;
+    }
+  }
+
+  &-Profile {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    user-select: none;
+
+    img {
+      border-radius: 30px;
+      display: inline-block;
+      height: 30px;
+      margin-left: 10px;
+    }
+  }
+
+  .Dropdown {
+    right: 10px;
+  }
+}

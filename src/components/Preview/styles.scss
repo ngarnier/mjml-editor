@@ -1,0 +1,16 @@
+.Preview {
+  display: flex;
+  flex-direction: column;
+
+  &-Iframe {
+    display: flex;
+    height: 100%;
+    width: 100%;
+
+    iframe {
+      border: 0;
+      height: 100%;
+      width: 100%;
+    }
+  }
+}

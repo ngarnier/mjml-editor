@@ -8,6 +8,8 @@ import render from 'server/render'
 
 const server = express()
 
+const port = process.env.PORT || 3333
+
 if (process.env.NODE_ENV === 'development') {
   require('server/webpack')(server)
 }
@@ -25,6 +27,6 @@ server.use(bodyParser.urlencoded({
 server.use('/api', api)
 server.use(render)
 
-server.listen(3333, err => {
+server.listen(port, err => {
   console.log(`[APP] listening`)
 })

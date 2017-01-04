@@ -41,7 +41,7 @@ export default async function render (req, res) {
 
     const store = createStore(reducers, {
       user: req.user
-        ? req.user._json
+        ? req.user.profile._json
         : null,
     })
 

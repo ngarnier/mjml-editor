@@ -3,14 +3,14 @@ import passport from 'passport'
 
 const router = express.Router()
 
-router.get('/signin', passport.authenticate('github', {
+router.get('/login', passport.authenticate('github', {
   scope: [
     'user',
     'gist',
   ],
 }))
 
-router.get('/signin/callback', passport.authenticate('github', {
+router.get('/login/callback', passport.authenticate('github', {
   failureRedirect: '/',
 }), (req, res) => {
   res.redirect('/')

@@ -10,7 +10,7 @@ import {
 
 import api from 'server/api'
 import auth from 'server/auth'
-// import github from 'server/github'
+import github from 'server/github'
 import render from 'server/render'
 
 const server = express()
@@ -42,16 +42,29 @@ server.use(passport.initialize())
 server.use(passport.session())
 
 passport.use(new Strategy({
-  callbackURL: `${process.env.HOST}/signin/callback`,
-  clientID: '2733cd74eaea1cdf5e53',
-  clientSecret: '46bcc71c5337b1de377a6061b9e21aef983d0eef',
+  callbackURL: `${process.env.HOST}/login/callback`,
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
 }, (accessToken, refreshToken, profile, done) => {
-  return done(null, profile)
+  done(null, {
+    accessToken,
+    profile,
+  })
 }))
 
-server.use('/api', api)
+const ensureAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next()
+  }
+
+  res
+    .status(403)
+    .end('Not authorized')
+}
+
 server.use(auth)
-// server.use(github)
+server.use('/api', api)
+server.use('/api/github', ensureAuthenticated, github)
 server.use(render)
 
 server.listen(port, err => {

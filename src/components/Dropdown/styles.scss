@@ -1,24 +1,32 @@
 .Dropdown {
-  background-color: #21252b;
+  background-color: #d7dae0;
   border-radius: 3px;
-  border: 1px solid #181a1f;
+  color: #21252b;
   min-width: 200px;
   position: absolute;
+  padding: 5px 0;
   top: 0;
 
   &:before {
     border: 8px solid transparent;
-    border-bottom-color: #181a1f;
+    border-bottom-color: #d7dae0;
     content: "";
     display: inline-block;
     position: absolute;
-    right: 5px;
+    right: 7px;
     top: -16px;
   }
 
   &-Item {
-    background-color: #282c34;
+    background-color: #d7dae0;
     width: 100%;
     padding: 10px;
+    user-select: none;
+
+    a {
+      color: #21252b;
+      display: block;
+      text-decoration: none;
+    }
   }
 }

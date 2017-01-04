@@ -18,7 +18,7 @@
     "express": "^4.14.0",
     "express-session": "^1.14.2",
     "filesize": "^3.3.0",
-    "github": "^7.2.0",
+    "github": "^7.2.1",
     "immutable": "^3.8.1",
     "lodash": "^4.17.4",
     "mjml": "^3.1.1",

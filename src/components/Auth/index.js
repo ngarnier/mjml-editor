@@ -8,7 +8,7 @@ import {
 
 import cx from 'classnames'
 import {
-  TransitionMotion,
+  Motion,
   spring,
 } from 'react-motion'
 
@@ -38,24 +38,6 @@ class Auth extends Component {
     showDropdown: false,
   })
 
-  willLeave () {
-    return {
-      y: spring(25),
-      opacity: spring(0),
-    }
-  }
-
-  getStyles () {
-    const {
-      showDropdown,
-    } = this.state
-
-    return {
-      y: spring(showDropdown ? 39 : 25),
-      opacity: spring(showDropdown ? 1 : 0),
-    }
-  }
-
   render () {
     const {
       user,
@@ -70,7 +52,7 @@ class Auth extends Component {
       })}>
         { user === null ?
           <div className="Auth-Signin">
-            <a href="/signin">
+            <a href="/login">
               Signin with Github <IconGithub />
             </a>
           </div> :
@@ -80,22 +62,14 @@ class Auth extends Component {
           >
             Signed in as&nbsp;<strong>{user.login}</strong> <img src={user.avatar_url} />
           </div> }
-        <TransitionMotion
-          willLeave={this.willLeave}
-          styles={[ {
-            key: 'key',
-            style: this.getStyles()
-          } ]}
+        <Motion
+          style={{
+            y: spring(showDropdown ? 43 : 39),
+            opacity: spring(showDropdown ? 1 : 0),
+          }}
         >
-        { interpolatedStyles => {
-          const {
-            key,
-            style,
-          } = interpolatedStyles[0]
-
-          return (
+          { style =>
             <Dropdown
-              key={key}
               onClose={this.handleDropdownClose}
               style={{
                 opacity: style.opacity,
@@ -104,13 +78,11 @@ class Auth extends Component {
             >
               <DropdownItem>
                 <a href="/logout">
-                  Logout
+                  Sign out
                 </a>
               </DropdownItem>
-            </Dropdown>
-          )
-        } }
-        </TransitionMotion>
+            </Dropdown> }
+        </Motion>
       </div>
     )
   }

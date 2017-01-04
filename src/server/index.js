@@ -42,7 +42,7 @@ server.use(passport.initialize())
 server.use(passport.session())
 
 passport.use(new Strategy({
-  callbackURL: 'http://127.0.0.1:3333/signin/callback',
+  callbackURL: `${process.env.HOST}/signin/callback`,
   clientID: '2733cd74eaea1cdf5e53',
   clientSecret: '46bcc71c5337b1de377a6061b9e21aef983d0eef',
 }, (accessToken, refreshToken, profile, done) => {

@@ -13,6 +13,13 @@
   right: 0;
   top: 50px;
 
+  &--preview {
+    .Editor-Left,
+    .Editor-Right {
+      width: 50%;
+    }
+  }
+
   &-Wrapper {
     display: flex;
     height: 100%;
@@ -40,7 +47,7 @@
     display: flex;
     position: relative;
     flex-direction: column;
-    width: 50%;
+    width: 100%;
   }
 
   &-Left {

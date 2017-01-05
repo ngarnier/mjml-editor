@@ -6,7 +6,7 @@ import find from 'lodash/find'
 import map from 'lodash/map'
 import debounce from 'lodash/debounce'
 
-import axios from 'axios'
+import io from 'socket.io-client'
 import cx from 'classnames'
 import shortid from 'shortid'
 import {
@@ -20,7 +20,7 @@ import {
 } from 'components/Tabs'
 import Empty from 'components/Empty'
 import Footer from 'components/Footer'
-import Preview from 'components/Preview'
+import Iframe from 'components/Iframe'
 
 import IconAdd from 'icons/Add'
 import IconProgramming from 'icons/Programming'
@@ -63,10 +63,10 @@ class Editor extends Component {
         : null,
       content: fromJS(content),
       cursor: null,
-      preview: {},
       showEditor: content.length > 0
         ? true
         : false,
+      showPreview: true,
     }
   }
 
@@ -78,6 +78,18 @@ class Editor extends Component {
     if (showEditor) {
       this.renderEditor()
     }
+
+    this.socket = io.connect()
+
+    this.socket.on('send-html-to-preview', () => {
+      this.renderHTML(this.getCurrentValue())
+    })
+
+    this.socket.on('minimize-preview', () => {
+      this.setState({
+        showPreview: true,
+      })
+    })
   }
 
   componentWillUpdate (nextProps, nextState) {
@@ -129,7 +141,7 @@ class Editor extends Component {
       instance.setOption('mode', 'application/json')
     }
 
-    this.renderHTML(value)
+    this.renderDebounceHTML(value)
     this.saveMJML(value)
   }
 
@@ -188,6 +200,14 @@ class Editor extends Component {
     })
   }
 
+  handleMaximize = () => {
+    this.setState({
+      showPreview: false,
+    })
+
+    window.open('/preview', '_blank', 'toolbar=0,menubar=0')
+  }
+
   saveHistory () {
     const {
       activeTab,
@@ -208,19 +228,6 @@ class Editor extends Component {
     } else {
       this._codeMirror.clearHistory()
     }
-  }
-
-  getCurentPreview () {
-    const {
-      activeTab,
-      preview,
-    } = this.state
-
-    if (activeTab === null) {
-      return null
-    }
-
-    return preview[activeTab]
   }
 
   getCurrentValue () {
@@ -260,6 +267,8 @@ class Editor extends Component {
 
       this._history = {}
     }
+
+    this.renderHTML('')
   }
 
   renderEditor () {
@@ -284,43 +293,15 @@ class Editor extends Component {
     this.renderHTML(value)
   }
 
-  renderHTML = debounce(mjml => {
-    if (mjml === '') {
-      return
-    }
-
-    const {
-      activeTab,
-      preview,
-    } = this.state
-
-    if (this._request !== null) {
-      this._request.cancel()
-    }
-
-    const {
-      CancelToken,
-    } = axios
-
-    this._request = CancelToken.source()
-
-    axios.post('/api/mjml2html', {
-      mjml,
-    }, {
-      cancelToken: this._request.token,
-    })
-    .then(res => {
-      const {
-        data,
-      } = res
-
-      preview[activeTab] = data
-
-      this.setState(prev => ({
-        preview,
-      }))
-    })
+  renderDebounceHTML = debounce(mjml => {
+    this.renderHTML(mjml)
   }, 250)
+
+  renderHTML = mjml => {
+    this.socket.emit('mjml-to-html', {
+      mjml,
+    })
+  }
 
   changeTab () {
     this._codeMirror.setValue(this.getCurrentValue())
@@ -336,10 +317,13 @@ class Editor extends Component {
       content,
       cursor,
       showEditor,
+      showPreview,
     } = this.state
 
     return (
-      <div className="Editor">
+      <div className={cx('Editor', {
+        'Editor--preview': showPreview,
+      })}>
         <Tabs>
           <Tab
             float={true}
@@ -379,11 +363,13 @@ class Editor extends Component {
                 ]}
               /> }
           </div>
-          <div className="Editor-Right">
-            <Preview
-              preview={this.getCurentPreview()}
-            />
-          </div>
+          { showPreview &&
+            <div className="Editor-Right">
+              <Iframe
+                onMaximize={this.handleMaximize}
+                maximize={true}
+              />
+            </div> }
         </div>
       </div>
     )

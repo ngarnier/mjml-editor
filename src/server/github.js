@@ -5,20 +5,32 @@ const router = express.Router()
 
 const github = new GitHubApi()
 
+const ensureAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next()
+  }
+
+  res
+    .status(403)
+    .end('Not authorized')
+}
+
 router.get('/gists/:id', (req, res) => {
   const {
     id,
   } = req.params
 
-  github.authenticate({
-    type: 'token',
-    token: req.user.accessToken,
-  })
+  if (req.isAuthenticated()) {
+    github.authenticate({
+      type: 'token',
+      token: req.user.accessToken,
+    })
+  }
 
   github.gists.get({
     id,
   }, (err, data) => {
-    res.send(data)
+    res.json(data)
   })
 })
 

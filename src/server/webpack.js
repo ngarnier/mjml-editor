@@ -4,7 +4,7 @@ import webpackHotMiddleware from 'webpack-hot-middleware'
 
 import webpackConfig from '../../webpack/dev.config.babel'
 
-export default server => {
+export default app => {
   const compiler = webpack(webpackConfig)
 
   const devMiddlewareConfig = {
@@ -12,6 +12,6 @@ export default server => {
     publicPath: webpackConfig.output.publicPath,
   }
 
-  server.use(webpackDevMiddleware(compiler, devMiddlewareConfig))
-  server.use(webpackHotMiddleware(compiler))
+  app.use(webpackDevMiddleware(compiler, devMiddlewareConfig))
+  app.use(webpackHotMiddleware(compiler))
 }

@@ -7,7 +7,5 @@ const state = {
 }
 
 export default handleActions({
-  SET_USER: state => ({
-    ...state,
-  }),
+  SET_USER: (state, { payload }) => payload,
 }, state)

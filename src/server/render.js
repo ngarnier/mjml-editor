@@ -39,8 +39,11 @@ export default async function render (req, res) {
       res.status(404)
     }
 
-    const store = createStore(reducers, {
-      user: req.user
+    const store = createStore(reducers, {})
+
+    store.dispatch({
+      type: 'SET_USER',
+      payload: req.user
         ? req.user.profile._json
         : null,
     })

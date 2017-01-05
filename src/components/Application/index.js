@@ -8,6 +8,7 @@ import {
 } from 'react-router'
 
 import Home from 'pages/Home'
+import Preview from 'pages/Preview'
 
 import Auth from 'components/Auth'
 
@@ -20,16 +21,24 @@ class Application extends Component {
   render () {
     return (
       <div className="Application">
-        <div className="Application-Header">
-          <div className="Application-Header-Logo">
-            <IconMjml />
-          </div>
-          <Auth />
-        </div>
         <Match
-          component={Home}
           exactly={true}
           pattern="/"
+          render={() => (
+            <div>
+              <div className="Application-Header">
+                <div className="Application-Header-Logo">
+                  <IconMjml />
+                </div>
+                <Auth />
+              </div>
+              <Home />
+            </div>
+          )}
+        />
+        <Match
+          component={Preview}
+          pattern="/preview"
         />
       </div>
     )

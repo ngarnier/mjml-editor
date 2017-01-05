@@ -48,6 +48,22 @@ export default async function render (req, res) {
         : null,
     })
 
+    if (req.session.editor) {
+      const {
+        editor,
+      } = req.session
+
+      store.dispatch({
+        type: 'SET_ACTIVE_TAB',
+        payload: editor.activeTab,
+      })
+
+      store.dispatch({
+        type: 'SET_TABS',
+        payload: editor.tabs,
+      })
+    }
+
     const content = renderToString(
       <Provider
         store={store}

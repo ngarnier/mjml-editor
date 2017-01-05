@@ -9,10 +9,14 @@ import debounce from 'lodash/debounce'
 import io from 'socket.io-client'
 import cx from 'classnames'
 import shortid from 'shortid'
-import {
+import Immutable, {
   fromJS,
   Map,
 } from 'immutable'
+
+import {
+  connect,
+} from 'react-redux'
 
 import {
   Tabs,
@@ -38,32 +42,41 @@ if (__BROWSER__) {
 
 import './styles.scss'
 
+@connect(
+  ({ editor }) => ({
+    editor,
+  })
+)
 class Editor extends Component {
 
   _codeMirror = null
 
   _history = {}
-  _request = null
 
   static defaultProps = {
-    content: [],
+    editor: {
+      activeTab: null,
+      tabs: [],
+    }
   }
 
   constructor (props) {
     super()
 
-    const content = map(props.content, item => ({
+    const tabs = map(props.editor.tabs, item => ({
       ...item,
-      id: shortid.generate(),
+      id: item.id || shortid.generate(),
     }))
 
     this.state = {
-      activeTab: props.activeTab || content.length > 0
-        ? content[0].id
-        : null,
-      content: fromJS(content),
+      activeTab: props.editor.activeTab !== null
+        ? props.editor.activeTab
+        : tabs.length > 0
+          ? tabs[0].id
+          : null,
+      tabs: fromJS(tabs),
       cursor: null,
-      showEditor: content.length > 0
+      showEditor: tabs.length > 0
         ? true
         : false,
       showPreview: true,
@@ -74,10 +87,6 @@ class Editor extends Component {
     const {
       showEditor,
     } = this.state
-
-    if (showEditor) {
-      this.renderEditor()
-    }
 
     this.socket = io.connect()
 
@@ -90,6 +99,10 @@ class Editor extends Component {
         showPreview: true,
       })
     })
+
+    if (showEditor) {
+      this.renderEditor()
+    }
   }
 
   componentWillUpdate (nextProps, nextState) {
@@ -118,12 +131,21 @@ class Editor extends Component {
     const {
       activeTab,
       showEditor,
+      tabs,
     } = this.state
 
     if (showEditor &&
         activeTab !== prevState.activeTab) {
       this.changeTab()
     }
+
+    if (activeTab !== prevState.activeTab) {
+      this.socket.emit('editor-set-active-tab', {
+        activeTab,
+      })
+    }
+
+    this.saveDebounceTabs(tabs)
   }
 
   handleCursorChange = insance => this.setState({
@@ -133,16 +155,8 @@ class Editor extends Component {
   handleChange = instance => {
     const value = instance.getValue()
 
-    if (/^\s*</.test(value)) {
-      instance.setOption('mode', 'xml')
-    }
-
-    if (!/^\s*</.test(value) && value.match(/\S/)) {
-      instance.setOption('mode', 'application/json')
-    }
-
     this.renderDebounceHTML(value)
-    this.saveMJML(value)
+    this.saveDebounceMJML(value)
   }
 
   handleTabChange = id => this.setState({
@@ -154,8 +168,8 @@ class Editor extends Component {
 
     this.setState(prev => ({
       activeTab: id,
-      content: prev.content.insert(
-        prev.content.findIndex(item => item.get('id') === prev.activeTab) + 1,
+      tabs: prev.tabs.insert(
+        prev.tabs.findIndex(item => item.get('id') === prev.activeTab) + 1,
         Map({
           id,
           name: 'untitled',
@@ -171,19 +185,19 @@ class Editor extends Component {
 
     const {
       activeTab,
-      content,
+      tabs,
     } = this.state
 
-    const index = content.findIndex(item => item.get('id') === id)
-    const newContent = content.delete(index)
+    const index = tabs.findIndex(item => item.get('id') === id)
+    const newTabs = tabs.delete(index)
 
     let newActiveTab = activeTab
 
     if (activeTab === id) {
-      if (newContent.size > 0) {
+      if (newTabs.size > 0) {
         newActiveTab = index - 1 < 0
-          ? newContent.get(0).get('id')
-          : newContent.get(index - 1).get('id')
+          ? newTabs.get(0).get('id')
+          : newTabs.get(index - 1).get('id')
       } else {
         newActiveTab = null
       }
@@ -193,7 +207,7 @@ class Editor extends Component {
 
     this.setState({
       activeTab: newActiveTab,
-      content: newContent,
+      tabs: newTabs,
       showEditor: newActiveTab === null
         ? false
         : true,
@@ -233,29 +247,41 @@ class Editor extends Component {
   getCurrentValue () {
     const {
       activeTab,
-      content,
+      tabs,
     } = this.state
 
     if (activeTab === null) {
       return ''
     }
 
-    return content.find(item => item.get('id') === activeTab).get('value')
+    const currentTab = tabs.find(item => item.get('id') === activeTab)
+
+    if (currentTab) {
+      return currentTab.get('value')
+    }
+
+    return ''
   }
 
-  saveMJML = debounce(mjml => {
+  saveDebounceMJML = debounce(mjml => {
     const {
       activeTab,
-      content,
+      tabs,
     } = this.state
 
     const index =
 
     this.setState({
-      content: content.setIn([
-        content.findIndex(item => item.get('id') === activeTab),
+      tabs: tabs.setIn([
+        tabs.findIndex(item => item.get('id') === activeTab),
         'value',
       ], mjml)
+    })
+  }, 25)
+
+  saveDebounceTabs = debounce(tabs => {
+    this.socket.emit('editor-set-tabs', {
+      tabs: tabs.toJS(),
     })
   }, 250)
 
@@ -271,6 +297,14 @@ class Editor extends Component {
     this.renderHTML('')
   }
 
+  changeTab () {
+    this._codeMirror.setValue(this.getCurrentValue())
+
+    this.setHistory()
+
+    this._codeMirror.focus()
+  }
+
   renderEditor () {
     const value = this.getCurrentValue()
 
@@ -278,7 +312,6 @@ class Editor extends Component {
       mode: 'xml',
       lineNumbers: true,
       theme: 'one-dark',
-      value,
       styleActiveLine: {
         nonEmpty: true,
       },
@@ -303,18 +336,10 @@ class Editor extends Component {
     })
   }
 
-  changeTab () {
-    this._codeMirror.setValue(this.getCurrentValue())
-
-    this.setHistory()
-
-    this._codeMirror.focus()
-  }
-
   render () {
     const {
       activeTab,
-      content,
+      tabs,
       cursor,
       showEditor,
       showPreview,
@@ -332,7 +357,7 @@ class Editor extends Component {
           >
             <IconAdd />
           </Tab>
-          { content.map(item => (
+          { tabs.map(item => (
             <Tab
               active={item.get('id') === activeTab}
               key={item.get('id')}
@@ -347,6 +372,7 @@ class Editor extends Component {
           <div className="Editor-Left">
             <div className="Editor-CodeMirror">
               <textarea
+                defaultValue={this.getCurrentValue()}
                 ref={r => this.textarea = r}
               />
               { !showEditor &&

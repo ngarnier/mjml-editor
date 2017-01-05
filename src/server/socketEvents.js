@@ -28,8 +28,16 @@ export default (socket, session) => {
       socketRoom,
     } = socket.handshake.session
 
+    if (!socket.handshake.session.editor) {
+      socket.handshake.session.editor = {}
+    }
+
     if (socketRoom) {
       socket.join(socketRoom)
+
+      socket.on('event', data => {
+        socket.broadcast.to(socketRoom).emit(data)
+      })
 
       socket.on('mjml-to-html', ({ mjml }) => {
         const preview = renderMJML(mjml)
@@ -39,8 +47,16 @@ export default (socket, session) => {
         })
       })
 
-      socket.on('event', data => {
-        socket.broadcast.to(socketRoom).emit(data)
+      socket.on('editor-set-active-tab', ({ activeTab }) => {
+        socket.handshake.session.editor.activeTab = activeTab
+
+        socket.handshake.session.save()
+      })
+
+      socket.on('editor-set-tabs', ({ tabs }) => {
+        socket.handshake.session.editor.tabs = tabs
+
+        socket.handshake.session.save()
       })
     }
   })

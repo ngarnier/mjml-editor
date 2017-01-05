@@ -22,7 +22,9 @@ import IconGithub from 'icons/Github'
 import './styles.scss'
 
 @connect(
-  ({ user }) => ({ user })
+  ({ user }) => ({
+    user,
+  })
 )
 class Auth extends Component {
 

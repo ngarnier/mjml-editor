@@ -7,7 +7,6 @@ import map from 'lodash/map'
 import debounce from 'lodash/debounce'
 
 import cx from 'classnames'
-import shortid from 'shortid'
 
 import Immutable, {
   fromJS,
@@ -49,7 +48,23 @@ import './styles.scss'
 
 @connect(
   ({ editor }) => ({
-    editor,
+    activeTab: editor.get('activeTab'),
+    tabs: editor.get('tabs'),
+  }),
+  dispatch => ({
+
+    // add a tab
+    addTab: () => dispatch({ type: 'ADD_TAB' }),
+
+    // remove a tab
+    removeTab: id => dispatch({ type: 'REMOVE_TAB', payload: id }),
+
+    // set this id as current active tab
+    setActiveTab: id => dispatch({ type: 'SET_ACTIVE_TAB', payload: id }),
+
+    // assigning mjml value to current tab
+    setCurrentValue: mjml => dispatch({ type: 'SET_CURRENT_VALUE', payload: mjml })
+
   })
 )
 class Editor extends Component {
@@ -58,34 +73,10 @@ class Editor extends Component {
 
   _history = {}
 
-  static defaultProps = {
-    editor: {
-      activeTab: null,
-      tabs: [],
-    }
-  }
-
-  constructor (props) {
-    super()
-
-    const tabs = map(props.editor.tabs, item => ({
-      ...item,
-      id: item.id || shortid.generate(),
-    }))
-
-    this.state = {
-      activeTab: props.editor.activeTab !== null
-        ? props.editor.activeTab
-        : tabs.length > 0
-          ? tabs[0].id
-          : null,
-      tabs: fromJS(tabs),
-      cursor: null,
-      showEditor: tabs.length > 0
-        ? true
-        : false,
-      showPreview: true,
-    }
+  state = {
+    cursor: null,
+    showEditor: this.props.tabs.size > 0,
+    showPreview: true,
   }
 
   componentDidMount () {
@@ -105,6 +96,12 @@ class Editor extends Component {
 
     if (showEditor) {
       this.renderEditor()
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.activeTab && !nextProps.activeTab) {
+      this.setState({ showEditor: false })
     }
   }
 
@@ -133,19 +130,18 @@ class Editor extends Component {
   componentDidUpdate (prevProps, prevState) {
     const {
       activeTab,
-      showEditor,
       tabs,
+    } = this.props
+
+    const {
+      showEditor,
     } = this.state
 
-    if (showEditor &&
-        activeTab !== prevState.activeTab) {
-      this.changeTab()
-    }
-
-    if (activeTab !== prevState.activeTab) {
-      socket.emit('editor-set-active-tab', {
-        activeTab,
-      })
+    if (activeTab !== prevProps.activeTab) {
+      socket.emit('editor-set-active-tab', { activeTab })
+      if (showEditor) {
+        this.changeTab()
+      }
     }
 
     this.saveDebounceTabs(tabs)
@@ -162,59 +158,19 @@ class Editor extends Component {
     this.saveDebounceMJML(value)
   }
 
-  handleTabChange = id => this.setState({
-    activeTab: id,
-  })
+  handleTabChange = id => this.props.setActiveTab(id)
 
   handleTabAdd = () => {
-    const id = shortid.generate()
-
-    this.setState(prev => ({
-      activeTab: id,
-      tabs: prev.tabs.insert(
-        prev.tabs.findIndex(item => item.get('id') === prev.activeTab) + 1,
-        Map({
-          id,
-          name: 'untitled',
-          value: '',
-        })
-      ),
+    this.props.addTab()
+    this.setState({
       showEditor: true,
-    }))
+    })
   }
 
   handleTabRemove = (id, e) => {
     e.stopPropagation()
-
-    const {
-      activeTab,
-      tabs,
-    } = this.state
-
-    const index = tabs.findIndex(item => item.get('id') === id)
-    const newTabs = tabs.delete(index)
-
-    let newActiveTab = activeTab
-
-    if (activeTab === id) {
-      if (newTabs.size > 0) {
-        newActiveTab = index - 1 < 0
-          ? newTabs.get(0).get('id')
-          : newTabs.get(index - 1).get('id')
-      } else {
-        newActiveTab = null
-      }
-    }
-
+    this.props.removeTab(id)
     delete this._history[id]
-
-    this.setState({
-      activeTab: newActiveTab,
-      tabs: newTabs,
-      showEditor: newActiveTab === null
-        ? false
-        : true,
-    })
   }
 
   handleMaximize = () => {
@@ -251,7 +207,7 @@ class Editor extends Component {
     const {
       activeTab,
       tabs,
-    } = this.state
+    } = this.props
 
     if (activeTab === null) {
       return ''
@@ -267,25 +223,11 @@ class Editor extends Component {
   }
 
   saveDebounceMJML = debounce(mjml => {
-    const {
-      activeTab,
-      tabs,
-    } = this.state
-
-    const index =
-
-    this.setState({
-      tabs: tabs.setIn([
-        tabs.findIndex(item => item.get('id') === activeTab),
-        'value',
-      ], mjml)
-    })
+    this.props.setCurrentValue(mjml)
   }, 25)
 
   saveDebounceTabs = debounce(tabs => {
-    socket.emit('editor-set-tabs', {
-      tabs: tabs.toJS(),
-    })
+    socket.emit('editor-set-tabs', { tabs: tabs.toJS() })
   }, 250)
 
   destroyEditor () {
@@ -341,9 +283,13 @@ class Editor extends Component {
   }
 
   render () {
+
     const {
       activeTab,
       tabs,
+    } = this.props
+
+    const {
       cursor,
       showEditor,
       showPreview,

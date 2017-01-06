@@ -1,19 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import { getActiveTab } from 'reducers/editor'
+import { isLoading } from 'reducers/loaders'
+
 import saveCurrentTabToGist from 'actions/saveCurrentTabToGist'
 
 import Button from 'components/Button'
 
 import './style.scss'
 
-@connect(state => {
-  const tabs = state.editor.get('tabs')
-  const activeTab = state.editor.get('activeTab')
-  return {
-    tab: tabs.find(t => t.get('id') === activeTab),
-  }
-}, {
+@connect(state => ({
+  tab: getActiveTab(state),
+  isSavingGist: isLoading(state, 'save-gist'),
+}), {
   saveCurrentTabToGist,
 })
 class TabActions extends Component {
@@ -23,6 +23,7 @@ class TabActions extends Component {
     const {
       saveCurrentTabToGist,
       tab,
+      isSavingGist,
     } = this.props
 
     const gistID = tab.get('gistID')
@@ -33,6 +34,7 @@ class TabActions extends Component {
           <Button
             success
             onClick={saveCurrentTabToGist}
+            isLoading={isSavingGist}
           >
             {'save'}
           </Button>

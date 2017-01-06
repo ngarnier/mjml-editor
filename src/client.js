@@ -22,6 +22,7 @@ const initialState = window.__INITIAL_STATE__
 
 // editor reducer is immutable
 initialState.editor = fromJS(initialState.editor)
+initialState.loaders = fromJS(initialState.loaders)
 
 const middlewares = applyMiddleware(thunk)
 const store = createStore(reducers, initialState, middlewares)

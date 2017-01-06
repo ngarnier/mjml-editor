@@ -80,3 +80,9 @@ export default handleActions({
     )),
 
 }, state)
+
+export function getActiveTab (state) {
+  const tabs = state.editor.get('tabs')
+  const activeTab = state.editor.get('activeTab')
+  return tabs.find(t => t.get('id') === activeTab, null)
+}

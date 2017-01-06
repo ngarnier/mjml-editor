@@ -93,29 +93,42 @@ class Editor extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.activeTab && !nextProps.activeTab) {
-      this.setState({ showEditor: false })
-    }
-  }
 
-  componentWillUpdate (nextProps, nextState) {
     const {
-      activeTab,
       showEditor,
     } = this.state
 
-    if (showEditor &&
-        activeTab !== nextState.activeTab) {
+    const {
+      activeTab,
+    } = this.props
+
+    const willHideEditor = this.props.activeTab && !nextProps.activeTab
+
+    if (willHideEditor) {
+      this.setState({ showEditor: false })
+    }
+
+    if (showEditor && !willHideEditor && activeTab !== nextProps.activeTab) {
       this.saveHistory()
     }
 
-    if (showEditor === true &&
-        nextState.showEditor === false) {
+  }
+
+  componentWillUpdate (nextProps, nextState) {
+
+    const {
+      activeTab,
+    } = this.props
+
+    const {
+      showEditor,
+    } = this.state
+
+    if (showEditor && !nextState.showEditor) {
       this.destroyEditor()
     }
 
-    if (showEditor === false &&
-        nextState.showEditor === true) {
+    if (!showEditor && nextState.showEditor) {
       this.renderEditor()
     }
   }
@@ -182,7 +195,7 @@ class Editor extends Component {
   saveHistory () {
     const {
       activeTab,
-    } = this.state
+    } = this.props
 
     this._history[activeTab] = this._codeMirror.getHistory()
   }
@@ -190,7 +203,7 @@ class Editor extends Component {
   setHistory () {
     const {
       activeTab,
-    } = this.state
+    } = this.props
 
     const history = this._history[activeTab]
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import thunk from 'redux-thunk'
 
 import {
   applyMiddleware,
@@ -14,7 +15,8 @@ import {
 
 import reducers from 'reducers'
 
-const store = createStore(reducers, window.__INITIAL_STATE__)
+const middlewares = applyMiddleware(thunk)
+const store = createStore(reducers, window.__INITIAL_STATE__, middlewares)
 
 const roolEl = document.getElementById('root')
 

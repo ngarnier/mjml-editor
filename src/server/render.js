@@ -1,4 +1,5 @@
 import React from 'react'
+import thunk from 'redux-thunk'
 import {
   renderToStaticMarkup,
   renderToString,
@@ -6,6 +7,7 @@ import {
 
 import {
   createStore,
+  applyMiddleware,
 } from 'redux'
 import {
   Provider,
@@ -39,7 +41,8 @@ export default async function render (req, res) {
       res.status(404)
     }
 
-    const store = createStore(reducers, {})
+    const middlewares = applyMiddleware(thunk)
+    const store = createStore(reducers, {}, middlewares)
 
     store.dispatch({
       type: 'SET_USER',

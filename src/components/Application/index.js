@@ -15,6 +15,7 @@ import Auth from 'components/Auth'
 import IconMjml from 'icons/Mjml'
 
 import './styles.scss'
+import 'styles/utils.scss'
 
 class Application extends Component {
 

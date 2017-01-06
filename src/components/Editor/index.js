@@ -6,9 +6,9 @@ import find from 'lodash/find'
 import map from 'lodash/map'
 import debounce from 'lodash/debounce'
 
-import io from 'socket.io-client'
 import cx from 'classnames'
 import shortid from 'shortid'
+
 import Immutable, {
   fromJS,
   Map,
@@ -22,9 +22,13 @@ import {
   Tabs,
   Tab,
 } from 'components/Tabs'
+
+import socket from 'getClientSocket'
+
 import Empty from 'components/Empty'
 import Footer from 'components/Footer'
 import Iframe from 'components/Iframe'
+import TabActions from 'components/TabActions'
 
 import IconAdd from 'icons/Add'
 import IconProgramming from 'icons/Programming'
@@ -89,13 +93,11 @@ class Editor extends Component {
       showEditor,
     } = this.state
 
-    this.socket = io.connect()
-
-    this.socket.on('send-html-to-preview', () => {
+    socket.on('send-html-to-preview', () => {
       this.renderHTML(this.getCurrentValue())
     })
 
-    this.socket.on('minimize-preview', () => {
+    socket.on('minimize-preview', () => {
       this.setState({
         showPreview: true,
       })
@@ -141,7 +143,7 @@ class Editor extends Component {
     }
 
     if (activeTab !== prevState.activeTab) {
-      this.socket.emit('editor-set-active-tab', {
+      socket.emit('editor-set-active-tab', {
         activeTab,
       })
     }
@@ -281,7 +283,7 @@ class Editor extends Component {
   }, 25)
 
   saveDebounceTabs = debounce(tabs => {
-    this.socket.emit('editor-set-tabs', {
+    socket.emit('editor-set-tabs', {
       tabs: tabs.toJS(),
     })
   }, 250)
@@ -333,7 +335,7 @@ class Editor extends Component {
   }, 250)
 
   renderHTML = mjml => {
-    this.socket.emit('mjml-to-html', {
+    socket.emit('mjml-to-html', {
       mjml,
     })
   }
@@ -370,6 +372,9 @@ class Editor extends Component {
             </Tab>
           )) }
         </Tabs>
+
+        {tabs.size > 0 && <TabActions />}
+
         <div className="Editor-Wrapper">
           <div className="Editor-Left">
             <div className="Editor-CodeMirror">

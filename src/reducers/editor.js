@@ -2,6 +2,8 @@ import { handleActions } from 'redux-actions'
 import shortid from 'shortid'
 import { fromJS } from 'immutable'
 
+import defaultTemplate from 'data/defaultTemplate'
+
 const state = fromJS({
   activeTab: null,
   tabs: [],
@@ -29,7 +31,7 @@ export default handleActions({
     const tab = fromJS({
       id: shortid.generate(),
       name: 'untitled',
-      value: '',
+      value: defaultTemplate,
     })
 
     return state

@@ -140,6 +140,11 @@ class Editor extends Component {
     this.saveDebounceTabs(tabs)
   }
 
+  componentWillUnmount () {
+    socket.removeAllListeners('send-html-to-preview')
+    socket.removeAllListeners('minimize-preview')
+  }
+
   handleCursorChange = insance => this.setState({
     cursor: insance.getCursor(),
   })

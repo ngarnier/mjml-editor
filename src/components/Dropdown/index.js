@@ -42,7 +42,6 @@ class Dropdown extends Component {
   render () {
     const {
       children,
-      isOpen,
       style,
     } = this.props
 

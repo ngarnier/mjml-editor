@@ -2,16 +2,9 @@ import React, {
   Component,
 } from 'react'
 
-import find from 'lodash/find'
-import map from 'lodash/map'
 import debounce from 'lodash/debounce'
 
 import cx from 'classnames'
-
-import Immutable, {
-  fromJS,
-  Map,
-} from 'immutable'
 
 import {
   connect,
@@ -63,13 +56,13 @@ import './styles.scss'
     setActiveTab: id => dispatch({ type: 'SET_ACTIVE_TAB', payload: id }),
 
     // assigning mjml value to current tab
-    setCurrentValue: mjml => dispatch({ type: 'SET_CURRENT_VALUE', payload: mjml })
+    setCurrentValue: mjml => dispatch({ type: 'SET_CURRENT_VALUE', payload: mjml }),
 
   })
 )
 class Editor extends Component {
 
-  _codeMirror = null
+  _codeMirror = null // eslint-disable-line react/sort-comp
 
   _history = {}
 
@@ -127,7 +120,7 @@ class Editor extends Component {
     }
   }
 
-  componentDidUpdate (prevProps, prevState) {
+  componentDidUpdate (prevProps) {
     const {
       activeTab,
       tabs,
@@ -296,9 +289,11 @@ class Editor extends Component {
     } = this.state
 
     return (
-      <div className={cx('Editor', {
-        'Editor--preview': showPreview,
-      })}>
+      <div
+        className={cx('Editor', {
+          'Editor--preview': showPreview,
+        })}
+      >
         <Tabs>
           <Tab
             float={true}

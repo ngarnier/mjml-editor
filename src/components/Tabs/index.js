@@ -39,7 +39,6 @@ class Tab extends Component {
       active,
       children,
       float,
-      id,
       onClick,
       onRemove,
       remove,

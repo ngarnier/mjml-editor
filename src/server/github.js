@@ -5,7 +5,7 @@ const router = express.Router()
 
 const github = new GitHubApi()
 
-const ensureAuthenticated = (req, res, next) => {
+export const ensureAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next()
   }
@@ -30,6 +30,7 @@ router.get('/gists/:id', (req, res) => {
   github.gists.get({
     id,
   }, (err, data) => {
+    if (err) { return res.status(500).send(err) }
     res.json(data)
   })
 })

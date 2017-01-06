@@ -24,6 +24,8 @@ function renderMJML (mjml) {
 
 export default (socket, session) => {
   session(socket.handshake, {}, err => {
+    if (err) { return }
+
     const {
       socketRoom,
     } = socket.handshake.session

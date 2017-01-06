@@ -49,9 +49,10 @@ class Auth extends Component {
     } = this.state
 
     return (
-      <div className={cx('Auth', {
-        'Auth--signed': user !== null,
-      })}>
+      <div
+        className={cx('Auth', {
+          'Auth--signed': user !== null,
+        })}>
         { user === null ?
           <div className="Auth-Signin">
             <a href="/login">

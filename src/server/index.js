@@ -4,14 +4,10 @@ import express from 'express'
 import path from 'path'
 import expressSession from 'express-session'
 import passport from 'passport'
-import url from 'url'
 import uuid from 'uuid/v4'
 import {
   Strategy as StrategyGithub,
 } from 'passport-github2'
-import {
-  Server as WebSocketServer,
-} from 'ws'
 
 import socketEvents from './socketEvents'
 
@@ -79,5 +75,9 @@ io.on('connection', socket => {
 })
 
 server.listen(port, err => {
-  console.log(`[APP] listening on port ${port}`)
+  if (err) {
+    console.log(err) // eslint-disable-line no-console
+    process.exit(1)
+  }
+  console.log(`[APP] listening on port ${port}`) // eslint-disable-line no-console
 })

@@ -6,7 +6,8 @@
     "build": "webpack --config webpack/build.config.babel.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "heroku-postbuild": "NODE_ENV=production npm run build",
-    "start": "cross-env NODE_ENV=production node index.js"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "lint": "eslint src"
   },
   "dependencies": {
     "axios": "^0.15.3",
@@ -41,6 +42,7 @@
   "devDependencies": {
     "autoprefixer": "^6.6.0",
     "babel-core": "^6.21.0",
+    "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.10",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-module-resolver": "^2.4.0",
@@ -52,6 +54,10 @@
     "babel-register": "^6.18.0",
     "cross-env": "^3.1.4",
     "css-loader": "^0.26.1",
+    "eslint": "^3.12.2",
+    "eslint-config-zavatta": "^4.2.0",
+    "eslint-config-zavatta-react": "^2.1.1",
+    "eslint-plugin-react": "^6.8.0",
     "extract-text-webpack-plugin": "2.0.0-beta.4",
     "ignore-styles": "^5.0.1",
     "node-sass": "^4.1.1",

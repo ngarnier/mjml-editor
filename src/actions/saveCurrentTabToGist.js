@@ -5,7 +5,7 @@ export default function saveCurrentTabToGist () {
 
     const state = getState()
 
-    socket.emit('yolo')
+    socket.emit('github/save-gist', state.editor.get('currentTab'))
 
   }
 }

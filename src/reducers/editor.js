@@ -20,6 +20,9 @@ export default handleActions({
 
   ADD_TAB: (state) => {
 
+    // limit to 5 tabs
+    if (state.get('tabs').size === 5) { return state }
+
     const tabs = state.get('tabs')
     const activeIndex = getActiveIndex(state)
 

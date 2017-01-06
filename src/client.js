@@ -6,6 +6,7 @@ import { fromJS } from 'immutable'
 import {
   applyMiddleware,
   createStore,
+  compose,
 } from 'redux'
 
 import {
@@ -24,7 +25,12 @@ const initialState = window.__INITIAL_STATE__
 initialState.editor = fromJS(initialState.editor)
 initialState.loaders = fromJS(initialState.loaders)
 
-const middlewares = applyMiddleware(thunk)
+const devTools = window.devToolsExtension ? window.devToolsExtension() : f => f
+
+const middlewares = compose(
+  applyMiddleware(thunk),
+  devTools,
+)
 const store = createStore(reducers, initialState, middlewares)
 
 const roolEl = document.getElementById('root')

@@ -1,5 +1,10 @@
 import React from 'react'
 import thunk from 'redux-thunk'
+
+import {
+  fromJS,
+} from 'immutable'
+
 import {
   renderToStaticMarkup,
   renderToString,
@@ -9,9 +14,11 @@ import {
   createStore,
   applyMiddleware,
 } from 'redux'
+
 import {
   Provider,
 } from 'react-redux'
+
 import {
   createServerRenderContext,
   ServerRouter,
@@ -63,7 +70,7 @@ export default async function render (req, res) {
 
       store.dispatch({
         type: 'SET_TABS',
-        payload: editor.tabs,
+        payload: fromJS(editor.tabs),
       })
     }
 

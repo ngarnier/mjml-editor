@@ -7,7 +7,13 @@ import Button from 'components/Button'
 
 import './style.scss'
 
-@connect(null, {
+@connect(state => {
+  const tabs = state.editor.get('tabs')
+  const activeTab = state.editor.get('activeTab')
+  return {
+    tab: tabs.find(t => t.get('id') === activeTab),
+  }
+}, {
   saveCurrentTabToGist,
 })
 class TabActions extends Component {
@@ -16,7 +22,10 @@ class TabActions extends Component {
 
     const {
       saveCurrentTabToGist,
+      tab,
     } = this.props
+
+    const gistID = tab.get('gistID')
 
     return (
       <div className="TabActions">
@@ -27,6 +36,12 @@ class TabActions extends Component {
           >
             {'save'}
           </Button>
+
+          {gistID && (
+            <div>
+              {`Gist ID: ${gistID}`}
+            </div>
+          )}
         </div>
       </div>
     )

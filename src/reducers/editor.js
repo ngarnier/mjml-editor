@@ -63,8 +63,20 @@ export default handleActions({
 
   SET_CURRENT_VALUE: (state, { payload: mjml }) => state
     .update('tabs', tabs => tabs.setIn(
-      [tabs.findIndex(t => t.get('id') === state.get('currentTab')), 'value'],
+      [
+        tabs.findIndex(t => t.get('id') === state.get('currentTab')),
+        'value',
+      ],
       mjml,
+    )),
+
+  SET_GIST_ID: (state, { payload: { id, gistID } }) => state
+    .update('tabs', tabs => tabs.setIn(
+      [
+        tabs.findIndex(t => t.get('id') === id),
+        'gistID',
+      ],
+      gistID,
     )),
 
 }, state)

@@ -60,6 +60,7 @@ export default (socket, session) => {
 
         socket.handshake.session.save()
       })
+
     }
   })
 }

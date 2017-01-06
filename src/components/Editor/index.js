@@ -35,6 +35,7 @@ if (__BROWSER__) {
   CodeMirror = require('codemirror')
 
   require('codemirror/addon/selection/active-line')
+  require('codemirror/addon/edit/closetag')
 
   require('codemirror/mode/xml/xml')
   require('codemirror/mode/javascript/javascript')
@@ -312,6 +313,7 @@ class Editor extends Component {
       mode: 'xml',
       lineNumbers: true,
       theme: 'one-dark',
+      autoCloseTags: true,
       styleActiveLine: {
         nonEmpty: true,
       },

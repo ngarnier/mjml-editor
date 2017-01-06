@@ -10,6 +10,7 @@ import Home from 'pages/Home'
 import Preview from 'pages/Preview'
 
 import Auth from 'components/Auth'
+import Notifications from 'components/Notifications'
 
 import IconMjml from 'icons/Mjml'
 
@@ -21,6 +22,9 @@ class Application extends Component {
   render () {
     return (
       <div className="Application">
+
+        <Notifications />
+
         <Match
           exactly={true}
           pattern="/"
@@ -36,10 +40,12 @@ class Application extends Component {
             </div>
           )}
         />
+
         <Match
           component={Preview}
           pattern="/preview"
         />
+
       </div>
     )
   }

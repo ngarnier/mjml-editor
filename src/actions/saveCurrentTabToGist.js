@@ -1,4 +1,7 @@
 import request from 'superagent'
+import get from 'lodash/get'
+
+import { addNotif } from 'actions/notifications'
 
 export default function saveCurrentTabToGist () {
   return function (dispatch, getState) {
@@ -17,7 +20,14 @@ export default function saveCurrentTabToGist () {
 
         dispatch({ type: 'LOADING_STOP', payload: 'save-gist' })
 
-        if (err) { return }
+        if (err) {
+          let errMsg = get(res, 'body.message', null)
+          try {
+            errMsg = JSON.parse(errMsg).message
+          } catch (e) {}
+          dispatch(addNotif(errMsg || 'Oops.. something bad happened.', 'error'))
+          return
+        }
 
         const {
           gistID,

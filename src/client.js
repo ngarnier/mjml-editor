@@ -24,6 +24,7 @@ const initialState = window.__INITIAL_STATE__
 // editor reducer is immutable
 initialState.editor = fromJS(initialState.editor)
 initialState.loaders = fromJS(initialState.loaders)
+initialState.notifications = fromJS(initialState.notifications)
 
 const devTools = window.devToolsExtension ? window.devToolsExtension() : f => f
 

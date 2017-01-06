@@ -4,7 +4,7 @@ export default `<mjml>
       <mj-section>
         <mj-column>
           <mj-text>
-          	Hello world
+            Hello world
           </mj-text>
         </mj-column>
       </mj-section>

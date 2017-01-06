@@ -1,11 +1,6 @@
 {
   "verbose": true,
-  "ignore": [
-    "actions/*",
-    "reducers/*",
-    "components/*",
-    "pages/*",
-    "icons/*",
-    "styles/*"
+  "watch": [
+    "src/server"
   ]
 }

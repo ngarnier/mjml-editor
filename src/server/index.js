@@ -79,5 +79,5 @@ io.on('connection', socket => {
 })
 
 server.listen(port, err => {
-  console.log(`[APP] listening`)
+  console.log(`[APP] listening on port ${port}`)
 })

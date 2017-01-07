@@ -21,10 +21,11 @@ import reducers from 'reducers'
 
 const initialState = window.__INITIAL_STATE__
 
-// editor reducer is immutable
+// immutable reducers
 initialState.editor = fromJS(initialState.editor)
 initialState.loaders = fromJS(initialState.loaders)
 initialState.notifications = fromJS(initialState.notifications)
+initialState.gist = fromJS(initialState.gist)
 
 const devTools = window.devToolsExtension ? window.devToolsExtension() : f => f
 

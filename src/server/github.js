@@ -1,5 +1,6 @@
 import express from 'express'
 import GitHubApi from 'github'
+import values from 'lodash/values'
 
 const router = express.Router()
 
@@ -33,9 +34,13 @@ router.get('/gists/:id', (req, res) => {
 
   github.gists.get({
     id,
-  }, (err, data) => {
+  }, (err, gist) => {
     if (err) { return res.status(500).send(err) }
-    res.json(data)
+    const files = values(gist.files)
+    res.json({
+      id,
+      files,
+    })
   })
 })
 

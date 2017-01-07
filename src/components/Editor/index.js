@@ -117,10 +117,6 @@ class Editor extends Component {
   componentWillUpdate (nextProps, nextState) {
 
     const {
-      activeTab,
-    } = this.props
-
-    const {
       showEditor,
     } = this.state
 

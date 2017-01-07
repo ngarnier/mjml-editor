@@ -2,9 +2,7 @@ import {
   handleActions,
 } from 'redux-actions'
 
-const state = {
-  user: null,
-}
+const state = null
 
 export default handleActions({
   SET_USER: (state, { payload }) => payload,

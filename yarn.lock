@@ -4810,6 +4810,10 @@ react-redux@^5.0.1:
     lodash-es "^4.2.0"
     loose-envify "^1.1.0"
 
+react-router-addons-routes@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/react-router-addons-routes/-/react-router-addons-routes-0.0.3.tgz#563ac20d1f45fdca99fa98199bdfac2ec33dd3ac"
+
 react-router@^4.0.0-alpha.6:
   version "4.0.0-alpha.6"
   resolved "https://registry.yarnpkg.com/react-router/-/react-router-4.0.0-alpha.6.tgz#239fcf9a6ba7997021022c9b51d72d370f7b6bf4"

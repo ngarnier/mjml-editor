@@ -24,7 +24,11 @@ import {
   ServerRouter,
 } from 'react-router'
 
+import { matchRoutesToLocation } from 'react-router-addons-routes'
+
 import reducers from 'reducers'
+
+import routes from 'routes'
 
 import { setUser } from 'actions/user'
 
@@ -37,6 +41,12 @@ const stats = process.env.NODE_ENV === 'production'
 
 export default async function render (req, res) {
   try {
+
+    // TODO: handle favicon
+    if (req.url === '/favicon.ico') {
+      return res.status(404).end()
+    }
+
     const context = createServerRenderContext()
     const result = context.getResult()
 
@@ -73,10 +83,23 @@ export default async function render (req, res) {
       })
     }
 
+    // pre-fetch data
+    const location = { pathname: req.url }
+    const { matchedRoutes, params } = matchRoutesToLocation(routes, location)
+
+    const dataParams = {
+      dispatch: store.dispatch,
+      params,
+    }
+
+    const dataPromises = matchedRoutes
+      .filter(route => route.component.load)
+      .map(route => route.component.load(dataParams))
+
+    await Promise.all(dataPromises)
+
     const content = renderToString(
-      <Provider
-        store={store}
-      >
+      <Provider store={store}>
         <ServerRouter
           context={context}
           location={req.url}

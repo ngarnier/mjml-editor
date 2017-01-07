@@ -32,15 +32,14 @@ const middlewares = compose(
   applyMiddleware(thunk),
   devTools,
 )
+
 const store = createStore(reducers, initialState, middlewares)
 
 const roolEl = document.getElementById('root')
 
 function render (Component) {
   ReactDOM.render(
-    <Provider
-      store={store}
-    >
+    <Provider store={store}>
       <BrowserRouter>
         <Component />
       </BrowserRouter>

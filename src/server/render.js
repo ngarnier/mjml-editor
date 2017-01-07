@@ -26,6 +26,8 @@ import {
 
 import reducers from 'reducers'
 
+import { setUser } from 'actions/user'
+
 import Application from 'components/Application'
 import Html from 'components/Html'
 
@@ -51,12 +53,9 @@ export default async function render (req, res) {
     const middlewares = applyMiddleware(thunk)
     const store = createStore(reducers, {}, middlewares)
 
-    store.dispatch({
-      type: 'SET_USER',
-      payload: req.user
-        ? req.user.profile._json
-        : null,
-    })
+    if (req.user) {
+      store.dispatch(setUser(req.user.profile._json))
+    }
 
     if (req.session.editor) {
       const {

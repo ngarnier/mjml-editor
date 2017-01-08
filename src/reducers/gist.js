@@ -8,6 +8,6 @@ const initialState = fromJS({
 
 export default handleActions({
 
-  SET_GIST: (state, { payload: gist }) => gist,
+  LOAD_GIST_SUCCESS: (state, { payload: gist }) => fromJS(gist),
 
 }, initialState)

@@ -11,7 +11,7 @@ export default store => next => async action => {
 
   // dispatch: to dispatch custom actions
   // getState: to eventually pass state to handlers
-  const { dispatch } = store
+  const { dispatch, getState } = store
 
   // extract prefix from action type
   // e.g 'API:FETCH_GIST => FETCH_GIST'
@@ -34,11 +34,16 @@ export default store => next => async action => {
     // build request params
 
     const r = {
-      url: `${global.__API_URL__}${url}`,
+      url: `${__API_URL__}${url}`,
       method,
     }
 
-    if (data) { r.data = data }
+    if (data) {
+      r.data = typeof data === 'function'
+        ? data(getState())
+        : data
+    }
+
     if (query) { r.query = query }
 
     // execute request

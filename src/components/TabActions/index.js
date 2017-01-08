@@ -30,6 +30,7 @@ class TabActions extends Component {
 
     return (
       <div className="TabActions">
+
         <div className="horizontal-list">
           <Button
             success
@@ -45,6 +46,7 @@ class TabActions extends Component {
             </div>
           )}
         </div>
+
       </div>
     )
   }

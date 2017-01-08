@@ -20,18 +20,27 @@ export default handleActions({
   SET_ACTIVE_TAB: (state, { payload: id }) => state.set('activeTab', id),
   SET_TABS: (state, { payload }) => state.set('tabs', payload),
 
-  ADD_TAB: (state) => {
-
-    // limit to 5 tabs
-    if (state.get('tabs').size === 5) { return state }
+  ADD_TAB: (state, { payload: file }) => {
 
     const tabs = state.get('tabs')
     const activeIndex = getActiveIndex(state)
 
+    // if file already open, just focus tab
+
+    if (file) {
+      const fileTab = tabs.find(t => t.get('name') === file.get('filename'))
+      if (fileTab) {
+        return state.set('activeTab', fileTab.get('id'))
+      }
+    }
+
+    // limit to 5 tabs
+    if (state.get('tabs').size === 5) { return state }
+
     const tab = fromJS({
       id: shortid.generate(),
-      name: 'untitled',
-      value: defaultTemplate,
+      name: file ? file.get('filename') : 'untitled',
+      value: file ? file.get('content') : defaultTemplate,
     })
 
     return state

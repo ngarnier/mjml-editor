@@ -2,6 +2,10 @@ import React, {
   Component,
 } from 'react'
 
+import {
+  bindActionCreators,
+} from 'redux'
+
 import debounce from 'lodash/debounce'
 
 import cx from 'classnames'
@@ -17,10 +21,13 @@ import {
 
 import socket from 'getClientSocket'
 
+import { addTab } from 'actions/editor'
+
 import Empty from 'components/Empty'
 import Footer from 'components/Footer'
 import Iframe from 'components/Iframe'
 import TabActions from 'components/TabActions'
+import GistPanel from 'components/GistPanel'
 
 import IconAdd from 'icons/Add'
 import IconProgramming from 'icons/Programming'
@@ -46,9 +53,6 @@ import './styles.scss'
   }),
   dispatch => ({
 
-    // add a tab
-    addTab: () => dispatch({ type: 'ADD_TAB' }),
-
     // remove a tab
     removeTab: id => dispatch({ type: 'REMOVE_TAB', payload: id }),
 
@@ -57,6 +61,14 @@ import './styles.scss'
 
     // assigning mjml value to current tab
     setCurrentValue: mjml => dispatch({ type: 'SET_CURRENT_VALUE', payload: mjml }),
+
+    // bind raw actions with dispatch
+    ...bindActionCreators({
+
+      // add a tab
+      addTab,
+
+    }, dispatch),
 
   })
 )
@@ -308,7 +320,9 @@ class Editor extends Component {
           'Editor--preview': showPreview,
         })}
       >
+
         <Tabs>
+
           <Tab
             float={true}
             onClick={this.handleTabAdd}
@@ -316,6 +330,7 @@ class Editor extends Component {
           >
             <IconAdd />
           </Tab>
+
           { tabs.map(item => (
             <Tab
               active={item.get('id') === activeTab}
@@ -331,6 +346,9 @@ class Editor extends Component {
         {tabs.size > 0 && <TabActions />}
 
         <div className="Editor-Wrapper">
+
+          <GistPanel />
+
           <div className="Editor-Left">
             <div className="Editor-CodeMirror">
               <textarea

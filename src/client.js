@@ -19,6 +19,8 @@ import {
 
 import reducers from 'reducers'
 
+import apiMiddleware from 'middlewares/api'
+
 const initialState = window.__INITIAL_STATE__
 
 // immutable reducers
@@ -30,7 +32,7 @@ initialState.gist = fromJS(initialState.gist)
 const devTools = window.devToolsExtension ? window.devToolsExtension() : f => f
 
 const middlewares = compose(
-  applyMiddleware(thunk),
+  applyMiddleware(thunk, apiMiddleware),
   devTools,
 )
 

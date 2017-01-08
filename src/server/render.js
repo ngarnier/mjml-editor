@@ -28,6 +28,8 @@ import { matchRoutesToLocation } from 'react-router-addons-routes'
 
 import reducers from 'reducers'
 
+import apiMiddleware from 'middlewares/api'
+
 import routes from 'routes'
 
 import { setUser } from 'actions/user'
@@ -60,7 +62,7 @@ export default async function render (req, res) {
       res.status(404)
     }
 
-    const middlewares = applyMiddleware(thunk)
+    const middlewares = applyMiddleware(thunk, apiMiddleware)
     const store = createStore(reducers, {}, middlewares)
 
     if (req.user) {

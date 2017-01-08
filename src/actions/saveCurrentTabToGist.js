@@ -2,6 +2,7 @@ import request from 'superagent'
 import get from 'lodash/get'
 
 import { addNotif } from 'actions/notifications'
+import { startLoader, stopLoader } from 'actions/loaders'
 
 export default function saveCurrentTabToGist () {
   return function (dispatch, getState) {
@@ -11,14 +12,14 @@ export default function saveCurrentTabToGist () {
     const activeTab = state.editor.get('activeTab')
     const tab = tabs.get(tabs.findIndex(t => t.get('id') === activeTab))
 
-    dispatch({ type: 'LOADING_START', payload: 'save-gist' })
+    dispatch(startLoader('save-gist'))
 
     request
       .post('/api/github/gists')
       .send({ tab })
       .end((err, res) => {
 
-        dispatch({ type: 'LOADING_STOP', payload: 'save-gist' })
+        dispatch(stopLoader('save-gist'))
 
         if (err) {
           let errMsg = get(res, 'body.message', null)

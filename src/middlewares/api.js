@@ -34,7 +34,7 @@ export default store => next => async action => {
     // build request params
 
     const r = {
-      url: `/api${url}`,
+      url: `${global.__API_URL__}${url}`,
       method,
     }
 

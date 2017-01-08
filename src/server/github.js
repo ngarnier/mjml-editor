@@ -47,23 +47,52 @@ router.get('/gists/:id', (req, res) => {
 router.post('/gists', (req, res) => {
 
   const {
+    gistID,
     tab,
   } = req.body
 
   const github = githubFactory(req)
-  github.gists.create({
-    files: {
-      toto: {
-        content: tab.value,
+
+  let promise
+
+  if (gistID) {
+
+    const payload = {
+      id: gistID,
+      files: {
+        [tab.name]: {
+          content: tab.value,
+        },
       },
-    },
-    public: true,
-  }, (err, data) => {
-    if (err) { return res.status(500).send(err) }
-    res.json({
-      gistID: data.id,
+    }
+
+    promise = github.gists.edit(payload)
+
+  } else {
+
+    const payload = {
+      files: {
+        [tab.name]: {
+          content: tab.value,
+        },
+      },
+      public: true,
+    }
+
+    promise = github.gists.create(payload)
+
+  }
+
+  promise
+    .then(data => {
+      res.json({
+        gistID: data.id,
+      })
     })
-  })
+    .catch(err => {
+      res.status(500).send(err)
+    })
+
 })
 
 export default router

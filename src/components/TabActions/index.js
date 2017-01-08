@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { getActiveTab } from 'reducers/editor'
 import { isLoading } from 'reducers/loaders'
 
-import saveCurrentTabToGist from 'actions/saveCurrentTabToGist'
+import { saveCurrentTabToGist } from 'actions/gists'
 
 import Button from 'components/Button'
 
@@ -12,7 +12,7 @@ import './style.scss'
 
 @connect(state => ({
   tab: getActiveTab(state),
-  isSavingGist: isLoading(state, 'save-gist'),
+  isSavingGist: isLoading(state, 'SAVE_CURRENT_TO_GIST'),
 }), {
   saveCurrentTabToGist,
 })

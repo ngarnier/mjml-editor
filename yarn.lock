@@ -4759,12 +4759,23 @@ react-hot-loader@^3.0.0-beta.6:
     redbox-react "^1.2.5"
     source-map "^0.4.4"
 
+react-mortal@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-mortal/-/react-mortal-2.0.0.tgz#754d44e0f8966e66d5d03d6f908f567d0b32ff06"
+  dependencies:
+    react-motion "^0.4.7"
+    react-portal "^3.0.0"
+
 react-motion@^0.4.7:
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/react-motion/-/react-motion-0.4.7.tgz#f77331ec7920bdb0d0cfc37eb6ffa10571bf42c7"
   dependencies:
     performance-now "^0.2.0"
     raf "^3.1.0"
+
+react-portal@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-portal/-/react-portal-3.0.0.tgz#9304fce836e8a3216b22588f8dc91b447728f0ae"
 
 react-proxy@^3.0.0-alpha.0:
   version "3.0.0-alpha.1"

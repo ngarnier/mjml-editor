@@ -24,6 +24,7 @@ export default store => next => async action => {
     method = 'get',
     query,
     data,
+    extra,
   } = action.payload
 
   // start loader which name is prefix
@@ -49,10 +50,15 @@ export default store => next => async action => {
     // execute request
     const res = await axios.request(r)
 
+    // ability to pass data to reducers from actions
+    const successPayload = extra
+      ? { extra, data: res.data }
+      : res.data
+
     // dispatch request result as success
     dispatch({
       type: `${prefix}_SUCCESS`,
-      payload: res.data,
+      payload: successPayload,
     })
 
     // stop loader

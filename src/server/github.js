@@ -95,4 +95,33 @@ router.post('/gists', (req, res) => {
 
 })
 
+router.delete('/gists', (req, res) => {
+
+  const {
+    gistID,
+    name,
+  } = req.body
+
+  if (!gistID) {
+    return res.status(400).send({ message: 'No gistID specified' })
+  }
+
+  const github = githubFactory(req)
+
+  github.gists
+    .edit({
+      id: gistID,
+      files: {
+        [name]: null,
+      },
+    })
+    .then(() => {
+      res.status(200).end()
+    })
+    .catch(err => {
+      res.status(500).send(err)
+    })
+
+})
+
 export default router

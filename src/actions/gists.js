@@ -32,3 +32,24 @@ export function saveCurrentTabToGist () {
     },
   }
 }
+
+// remove the given file from the current gist
+export function removeFileFromGist (name) {
+  return {
+    type: 'API:REMOVE_FILE_FROM_GIST',
+    payload: {
+      method: 'delete',
+      url: '/github/gists',
+      data: state => {
+        const gistID = state.gist.get('id')
+        return {
+          gistID,
+          name,
+        }
+      },
+      extra: {
+        name,
+      },
+    },
+  }
+}

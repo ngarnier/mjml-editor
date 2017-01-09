@@ -93,6 +93,26 @@ export default handleActions({
       gistID,
     )),
 
+  REMOVE_FILE_FROM_GIST_SUCCESS: (state, { payload }) => {
+
+    const {
+      name,
+    } = payload.extra
+
+    const tab = state.get('tabs').find(t => t.get('name') === name)
+    if (!tab) { return state }
+
+    const activeTab = state.get('activeTab')
+    const isActive = tab.get('id') === activeTab
+
+    return state
+      .update(
+        'tabs',
+        tabs => tabs.filter(t => t.get('name') !== name)
+      )
+      .set('activeTab', isActive ? null : activeTab)
+  },
+
 }, state)
 
 export function getActiveTab (state) {

@@ -25,7 +25,7 @@ class Modal extends Component {
         motionStyle={(spring, isVisible) => ({
           opacity: spring(isVisible ? 1 : 0),
           modalOffset: spring(isVisible ? 0 : -100, {
-            stiffness: isVisible ? 170 : 250,
+            stiffness: isVisible ? 220 : 250,
           }),
         })}
       >

@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import { startLoader, stopLoader } from 'actions/loaders'
+import { addNotif } from 'actions/notifications'
 
 export default store => next => async action => {
 
@@ -70,6 +71,8 @@ export default store => next => async action => {
     dispatch({
       type: `${prefix}_ERROR`,
     })
+
+    dispatch(addNotif(err.message || err, 'error'))
 
     // stop loader
     dispatch(stopLoader(prefix))

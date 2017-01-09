@@ -16,6 +16,7 @@ import './style.scss'
 
 @connect(state => ({
   tab: getActiveTab(state),
+  gistID: state.gist.get('id'),
   isSavingGist: isLoading(state, 'SAVE_CURRENT_TO_GIST'),
   isDeletingGist: isLoading(state, 'REMOVE_FILE_FROM_GIST'),
 }), {
@@ -49,13 +50,12 @@ class TabActions extends Component {
       tab,
       isSavingGist,
       isDeletingGist,
+      gistID,
     } = this.props
 
     const {
       isModalDeleteOpened,
     } = this.state
-
-    const gistID = tab.get('gistID')
 
     return (
       <div className="TabActions">
@@ -76,13 +76,15 @@ class TabActions extends Component {
             </div>
           )}
 
-          <Button
-            danger
-            onClick={this.openModalDelete}
-            isLoading={isDeletingGist}
-          >
-            {'delete'}
-          </Button>
+          {gistID && (
+            <Button
+              danger
+              onClick={this.openModalDelete}
+              isLoading={isDeletingGist}
+            >
+              {'delete'}
+            </Button>
+          )}
 
         </div>
 

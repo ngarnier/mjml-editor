@@ -84,15 +84,6 @@ export default handleActions({
       )
     }),
 
-  SET_GIST_ID: (state, { payload: { id, gistID } }) => state
-    .update('tabs', tabs => tabs.setIn(
-      [
-        tabs.findIndex(t => t.get('id') === id),
-        'gistID',
-      ],
-      gistID,
-    )),
-
   REMOVE_FILE_FROM_GIST_SUCCESS: (state, { payload }) => {
 
     const {

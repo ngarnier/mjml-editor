@@ -112,6 +112,7 @@ class Editor extends Component {
 
     const {
       activeTab,
+      tabs,
     } = this.props
 
     const willHideEditor = this.props.activeTab && !nextProps.activeTab
@@ -122,6 +123,12 @@ class Editor extends Component {
 
     if (showEditor && !willHideEditor && activeTab !== nextProps.activeTab) {
       this.saveHistory()
+    }
+
+    if (tabs.size === 0 && nextProps.tabs.size > 0) {
+      this.setState({
+        showEditor: true,
+      })
     }
 
   }

@@ -1,0 +1,22 @@
+.Notifications {
+  position: fixed;
+  bottom: 10px;
+  right: 5px;
+  z-index: 100;
+  width: 500px;
+
+  .Notif {
+    padding: 15px;
+    margin: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: rgba(0, 0, 0, 0.5) 0 3px 8px;
+    background: #528bff;
+    color: white;
+    font-size: 12px;
+
+    &.error {
+      background: #b36161;
+    }
+  }
+}

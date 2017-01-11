@@ -3,44 +3,24 @@ import React, {
 } from 'react'
 
 import {
-  Link,
-  Match,
-} from 'react-router'
+  RoutesProvider,
+  MatchWithRoutes,
+} from 'react-router-addons-routes'
 
-import Home from 'pages/Home'
-import Preview from 'pages/Preview'
-
-import Auth from 'components/Auth'
-
-import IconMjml from 'icons/Mjml'
+import routes from 'routes'
 
 import './styles.scss'
+import 'styles/utils.scss'
 
 class Application extends Component {
 
   render () {
     return (
-      <div className="Application">
-        <Match
-          exactly={true}
-          pattern="/"
-          render={() => (
-            <div>
-              <div className="Application-Header">
-                <div className="Application-Header-Logo">
-                  <IconMjml />
-                </div>
-                <Auth />
-              </div>
-              <Home />
-            </div>
-          )}
-        />
-        <Match
-          component={Preview}
-          pattern="/preview"
-        />
-      </div>
+      <RoutesProvider routes={routes}>
+        <div className="Application">
+          {routes.map(route => <MatchWithRoutes key={route.name} {...route} />)}
+        </div>
+      </RoutesProvider>
     )
   }
 

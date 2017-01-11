@@ -11,10 +11,10 @@
     height: 30px;
     line-height: 30px;
     min-width: 100px;
-    padding-left: 10px;
-    padding-right: 10px;
-    position: relative;
+    padding-left: 30px;
+    padding-right: 30px;
     text-align: center;
+    position: relative;
     top: -1px;
     user-select: none;
 
@@ -26,17 +26,27 @@
 
     &:hover {
       .Tab-Remove {
-        display: block;
+        opacity: 0.6;
+        pointer-events: auto;
+        &:hover {
+          opacity: 1;
+        }
       }
     }
 
     &-Remove {
+      opacity: 0;
+      pointer-events: none;
       display: none;
       cursor: pointer;
       position: absolute;
-      top: 50%;
-      right: 10px;
-      margin-top: -4px;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 20px;
       z-index: 2;
 
       svg {

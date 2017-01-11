@@ -1,0 +1,19 @@
+{
+  "extends": ["zavatta", "zavatta-react"],
+  "rules": {
+    "jsx-quotes": [2, "prefer-double"],
+    "operator-linebreak": 0,
+    "react/jsx-boolean-value": 0,
+    "no-empty": 0,
+    "id-length": 0,
+  },
+  "globals": {
+    "Promise": false,
+    "__API_URL__": false,
+    "__BROWSER__": false,
+    "__DEBUG__": false,
+    "__ENV__": false,
+    "__DEV__": false,
+    "__PROD__": false
+  }
+}

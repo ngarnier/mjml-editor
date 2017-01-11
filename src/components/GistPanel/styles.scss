@@ -1,0 +1,23 @@
+.GistPanel {
+  font-size: 12px;
+  width: 200px;
+  flex-shrink: 0;
+  background: #21252b;
+  border-right: 1px solid #181a1f;
+}
+
+.GistPanel--file {
+  padding: 10px 5px;
+  cursor: pointer;
+  color: #aaa;
+  overflow: hidden;
+  white-space: pre;
+  text-overflow: ellipsis;
+  &:hover {
+    background: rgba(black, 0.1);
+  }
+
+  &.active {
+    color: white;
+  }
+}

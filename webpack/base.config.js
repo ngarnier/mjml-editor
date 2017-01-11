@@ -2,6 +2,7 @@ import autoprefixer from 'autoprefixer'
 import cssnano from 'cssnano'
 import path from 'path'
 import webpack from 'webpack'
+import mapValues from 'lodash/mapValues'
 
 import * as globals from '../src/globals'
 
@@ -46,7 +47,7 @@ export default {
     publicPath: '/dist/',
   },
   plugins: [
-    new webpack.DefinePlugin(Object.assign({}, globals, {
+    new webpack.DefinePlugin(Object.assign({}, mapValues(globals, v => JSON.stringify(v)), {
       __BROWSER__: JSON.stringify(true),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     })),

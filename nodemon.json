@@ -1,9 +1,8 @@
 {
   "verbose": true,
-  "ignore": [
-    "components/*",
-    "pages/*",
-    "icons/*",
-    "styles/*"
+  "watch": [
+    ".env",
+    "src/server",
+    "src/routes.js"
   ]
 }

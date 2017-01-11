@@ -1,0 +1,12 @@
+body {
+  font-size: 12px;
+}
+
+.horizontal-list {
+  display: flex;
+  align-items: center;
+
+  > * + * {
+    margin-left: 10px;
+  }
+}

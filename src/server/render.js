@@ -1,4 +1,10 @@
 import React from 'react'
+import thunk from 'redux-thunk'
+
+import {
+  fromJS,
+} from 'immutable'
+
 import {
   renderToStaticMarkup,
   renderToString,
@@ -6,16 +12,27 @@ import {
 
 import {
   createStore,
+  applyMiddleware,
 } from 'redux'
+
 import {
   Provider,
 } from 'react-redux'
+
 import {
   createServerRenderContext,
   ServerRouter,
 } from 'react-router'
 
+import { matchRoutesToLocation } from 'react-router-addons-routes'
+
 import reducers from 'reducers'
+
+import apiMiddleware from 'middlewares/api'
+
+import routes from 'routes'
+
+import { setUser } from 'actions/user'
 
 import Application from 'components/Application'
 import Html from 'components/Html'
@@ -26,6 +43,12 @@ const stats = process.env.NODE_ENV === 'production'
 
 export default async function render (req, res) {
   try {
+
+    // TODO: handle favicon
+    if (req.url === '/favicon.ico') {
+      return res.status(404).end()
+    }
+
     const context = createServerRenderContext()
     const result = context.getResult()
 
@@ -39,14 +62,12 @@ export default async function render (req, res) {
       res.status(404)
     }
 
-    const store = createStore(reducers, {})
+    const middlewares = applyMiddleware(thunk, apiMiddleware)
+    const store = createStore(reducers, {}, middlewares)
 
-    store.dispatch({
-      type: 'SET_USER',
-      payload: req.user
-        ? req.user.profile._json
-        : null,
-    })
+    if (req.user) {
+      store.dispatch(setUser(req.user.profile._json))
+    }
 
     if (req.session.editor) {
       const {
@@ -60,14 +81,27 @@ export default async function render (req, res) {
 
       store.dispatch({
         type: 'SET_TABS',
-        payload: editor.tabs,
+        payload: fromJS(editor.tabs),
       })
     }
 
+    // pre-fetch data
+    const location = { pathname: req.url }
+    const { matchedRoutes, params } = matchRoutesToLocation(routes, location)
+
+    const dataParams = {
+      dispatch: store.dispatch,
+      params,
+    }
+
+    const dataPromises = matchedRoutes
+      .filter(route => route.component.load)
+      .map(route => route.component.load(dataParams))
+
+    await Promise.all(dataPromises)
+
     const content = renderToString(
-      <Provider
-        store={store}
-      >
+      <Provider store={store}>
         <ServerRouter
           context={context}
           location={req.url}

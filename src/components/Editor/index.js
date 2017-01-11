@@ -2,17 +2,13 @@ import React, {
   Component,
 } from 'react'
 
-import find from 'lodash/find'
-import map from 'lodash/map'
+import {
+  bindActionCreators,
+} from 'redux'
+
 import debounce from 'lodash/debounce'
 
-import io from 'socket.io-client'
 import cx from 'classnames'
-import shortid from 'shortid'
-import Immutable, {
-  fromJS,
-  Map,
-} from 'immutable'
 
 import {
   connect,
@@ -22,9 +18,16 @@ import {
   Tabs,
   Tab,
 } from 'components/Tabs'
+
+import socket from 'getClientSocket'
+
+import { addTab } from 'actions/editor'
+
 import Empty from 'components/Empty'
 import Footer from 'components/Footer'
 import Iframe from 'components/Iframe'
+import TabActions from 'components/TabActions'
+import GistPanel from 'components/GistPanel'
 
 import IconAdd from 'icons/Add'
 import IconProgramming from 'icons/Programming'
@@ -35,6 +38,7 @@ if (__BROWSER__) {
   CodeMirror = require('codemirror')
 
   require('codemirror/addon/selection/active-line')
+  require('codemirror/addon/edit/closetag')
 
   require('codemirror/mode/xml/xml')
   require('codemirror/mode/javascript/javascript')
@@ -44,43 +48,40 @@ import './styles.scss'
 
 @connect(
   ({ editor }) => ({
-    editor,
+    activeTab: editor.get('activeTab'),
+    tabs: editor.get('tabs'),
+  }),
+  dispatch => ({
+
+    // remove a tab
+    removeTab: id => dispatch({ type: 'REMOVE_TAB', payload: id }),
+
+    // set this id as current active tab
+    setActiveTab: id => dispatch({ type: 'SET_ACTIVE_TAB', payload: id }),
+
+    // assigning mjml value to current tab
+    setCurrentValue: mjml => dispatch({ type: 'SET_CURRENT_VALUE', payload: mjml }),
+
+    // bind raw actions with dispatch
+    ...bindActionCreators({
+
+      // add a tab
+      addTab,
+
+    }, dispatch),
+
   })
 )
 class Editor extends Component {
 
-  _codeMirror = null
+  _codeMirror = null // eslint-disable-line react/sort-comp
 
   _history = {}
 
-  static defaultProps = {
-    editor: {
-      activeTab: null,
-      tabs: [],
-    }
-  }
-
-  constructor (props) {
-    super()
-
-    const tabs = map(props.editor.tabs, item => ({
-      ...item,
-      id: item.id || shortid.generate(),
-    }))
-
-    this.state = {
-      activeTab: props.editor.activeTab !== null
-        ? props.editor.activeTab
-        : tabs.length > 0
-          ? tabs[0].id
-          : null,
-      tabs: fromJS(tabs),
-      cursor: null,
-      showEditor: tabs.length > 0
-        ? true
-        : false,
-      showPreview: true,
-    }
+  state = {
+    cursor: null,
+    showEditor: this.props.tabs.size > 0,
+    showPreview: true,
   }
 
   componentDidMount () {
@@ -88,13 +89,11 @@ class Editor extends Component {
       showEditor,
     } = this.state
 
-    this.socket = io.connect()
-
-    this.socket.on('send-html-to-preview', () => {
+    socket.on('send-html-to-preview', () => {
       this.renderHTML(this.getCurrentValue())
     })
 
-    this.socket.on('minimize-preview', () => {
+    socket.on('minimize-preview', () => {
       this.setState({
         showPreview: true,
       })
@@ -105,47 +104,66 @@ class Editor extends Component {
     }
   }
 
-  componentWillUpdate (nextProps, nextState) {
+  componentWillReceiveProps (nextProps) {
+
     const {
-      activeTab,
       showEditor,
     } = this.state
 
-    if (showEditor &&
-        activeTab !== nextState.activeTab) {
+    const {
+      activeTab,
+    } = this.props
+
+    const willHideEditor = this.props.activeTab && !nextProps.activeTab
+
+    if (willHideEditor) {
+      this.setState({ showEditor: false })
+    }
+
+    if (showEditor && !willHideEditor && activeTab !== nextProps.activeTab) {
       this.saveHistory()
     }
 
-    if (showEditor === true &&
-        nextState.showEditor === false) {
+  }
+
+  componentWillUpdate (nextProps, nextState) {
+
+    const {
+      showEditor,
+    } = this.state
+
+    if (showEditor && !nextState.showEditor) {
       this.destroyEditor()
     }
 
-    if (showEditor === false &&
-        nextState.showEditor === true) {
+    if (!showEditor && nextState.showEditor) {
       this.renderEditor()
     }
   }
 
-  componentDidUpdate (prevProps, prevState) {
+  componentDidUpdate (prevProps) {
     const {
       activeTab,
-      showEditor,
       tabs,
+    } = this.props
+
+    const {
+      showEditor,
     } = this.state
 
-    if (showEditor &&
-        activeTab !== prevState.activeTab) {
-      this.changeTab()
-    }
-
-    if (activeTab !== prevState.activeTab) {
-      this.socket.emit('editor-set-active-tab', {
-        activeTab,
-      })
+    if (activeTab !== prevProps.activeTab) {
+      socket.emit('editor-set-active-tab', { activeTab })
+      if (showEditor) {
+        this.changeTab()
+      }
     }
 
     this.saveDebounceTabs(tabs)
+  }
+
+  componentWillUnmount () {
+    socket.removeAllListeners('send-html-to-preview')
+    socket.removeAllListeners('minimize-preview')
   }
 
   handleCursorChange = insance => this.setState({
@@ -159,59 +177,19 @@ class Editor extends Component {
     this.saveDebounceMJML(value)
   }
 
-  handleTabChange = id => this.setState({
-    activeTab: id,
-  })
+  handleTabChange = id => this.props.setActiveTab(id)
 
   handleTabAdd = () => {
-    const id = shortid.generate()
-
-    this.setState(prev => ({
-      activeTab: id,
-      tabs: prev.tabs.insert(
-        prev.tabs.findIndex(item => item.get('id') === prev.activeTab) + 1,
-        Map({
-          id,
-          name: 'untitled',
-          value: '',
-        })
-      ),
+    this.props.addTab()
+    this.setState({
       showEditor: true,
-    }))
+    })
   }
 
   handleTabRemove = (id, e) => {
     e.stopPropagation()
-
-    const {
-      activeTab,
-      tabs,
-    } = this.state
-
-    const index = tabs.findIndex(item => item.get('id') === id)
-    const newTabs = tabs.delete(index)
-
-    let newActiveTab = activeTab
-
-    if (activeTab === id) {
-      if (newTabs.size > 0) {
-        newActiveTab = index - 1 < 0
-          ? newTabs.get(0).get('id')
-          : newTabs.get(index - 1).get('id')
-      } else {
-        newActiveTab = null
-      }
-    }
-
+    this.props.removeTab(id)
     delete this._history[id]
-
-    this.setState({
-      activeTab: newActiveTab,
-      tabs: newTabs,
-      showEditor: newActiveTab === null
-        ? false
-        : true,
-    })
   }
 
   handleMaximize = () => {
@@ -225,7 +203,7 @@ class Editor extends Component {
   saveHistory () {
     const {
       activeTab,
-    } = this.state
+    } = this.props
 
     this._history[activeTab] = this._codeMirror.getHistory()
   }
@@ -233,7 +211,7 @@ class Editor extends Component {
   setHistory () {
     const {
       activeTab,
-    } = this.state
+    } = this.props
 
     const history = this._history[activeTab]
 
@@ -248,7 +226,7 @@ class Editor extends Component {
     const {
       activeTab,
       tabs,
-    } = this.state
+    } = this.props
 
     if (activeTab === null) {
       return ''
@@ -264,25 +242,11 @@ class Editor extends Component {
   }
 
   saveDebounceMJML = debounce(mjml => {
-    const {
-      activeTab,
-      tabs,
-    } = this.state
-
-    const index =
-
-    this.setState({
-      tabs: tabs.setIn([
-        tabs.findIndex(item => item.get('id') === activeTab),
-        'value',
-      ], mjml)
-    })
+    this.props.setCurrentValue(mjml)
   }, 25)
 
   saveDebounceTabs = debounce(tabs => {
-    this.socket.emit('editor-set-tabs', {
-      tabs: tabs.toJS(),
-    })
+    socket.emit('editor-set-tabs', { tabs: tabs.toJS() })
   }, 250)
 
   destroyEditor () {
@@ -312,6 +276,7 @@ class Editor extends Component {
       mode: 'xml',
       lineNumbers: true,
       theme: 'one-dark',
+      autoCloseTags: true,
       styleActiveLine: {
         nonEmpty: true,
       },
@@ -331,25 +296,33 @@ class Editor extends Component {
   }, 250)
 
   renderHTML = mjml => {
-    this.socket.emit('mjml-to-html', {
+    socket.emit('mjml-to-html', {
       mjml,
     })
   }
 
   render () {
+
     const {
       activeTab,
       tabs,
+    } = this.props
+
+    const {
       cursor,
       showEditor,
       showPreview,
     } = this.state
 
     return (
-      <div className={cx('Editor', {
-        'Editor--preview': showPreview,
-      })}>
+      <div
+        className={cx('Editor', {
+          'Editor--preview': showPreview,
+        })}
+      >
+
         <Tabs>
+
           <Tab
             float={true}
             onClick={this.handleTabAdd}
@@ -357,6 +330,7 @@ class Editor extends Component {
           >
             <IconAdd />
           </Tab>
+
           { tabs.map(item => (
             <Tab
               active={item.get('id') === activeTab}
@@ -368,7 +342,13 @@ class Editor extends Component {
             </Tab>
           )) }
         </Tabs>
+
+        {tabs.size > 0 && <TabActions />}
+
         <div className="Editor-Wrapper">
+
+          <GistPanel />
+
           <div className="Editor-Left">
             <div className="Editor-CodeMirror">
               <textarea

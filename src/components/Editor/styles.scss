@@ -33,8 +33,11 @@
   position: relative;
   flex-grow: 1;
 
-  > textarea {
-    display: none;
+  // if I put `display: none` we can't type anymore :D
+  textarea {
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .CodeMirror {

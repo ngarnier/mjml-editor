@@ -84,6 +84,32 @@ class DragResize extends Component {
 
   })
 
+  handleDragStart = e => {
+    e.dataTransfer.setDragImage(emptyImage, 0, 0)
+    this.setState({
+      isDragging: true,
+    })
+  }
+
+  handleDrag = e => {
+    this.measureX(e.screenX)
+  }
+
+  handleDragEnd = e => {
+
+    // prevent eventually pasting text
+    // into editor
+    e.preventDefault()
+
+    this.setState({
+      isDragging: false,
+      barOffset: 0,
+    })
+
+  }
+
+  setBarRef = n => this._bar = n
+
   render () {
 
     const {
@@ -95,30 +121,12 @@ class DragResize extends Component {
       <div
         className="DragResize"
         draggable
-        onDragStart={e => {
-          e.dataTransfer.setDragImage(emptyImage, 0, 0)
-          this.setState({
-            isDragging: true,
-          })
-        }}
-        onDrag={e => {
-          this.measureX(e.screenX)
-        }}
-        onDragEnd={e => {
-
-          // prevent eventually pasting text
-          // into editor
-          e.preventDefault()
-
-          this.setState({
-            isDragging: false,
-            barOffset: 0,
-          })
-
-        }}
+        onDragStart={this.handleDragStart}
+        onDrag={this.handleDrag}
+        onDragEnd={this.handleDragEnd}
       >
         <div
-          ref={n => this._bar = n}
+          ref={this.setBarRef}
           className="bar"
           style={{
             transform: `translate3d(${isDragging ? barOffset : 0}px, 0, 0)`,

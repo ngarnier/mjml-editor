@@ -12,45 +12,45 @@
   position: absolute;
   right: 0;
   top: 50px;
+}
 
-  &--preview {
-    .Editor-Left,
-    .Editor-Right {
-      width: 50%;
-    }
+.Editor--preview {
+  .Editor-Left,
+  .Editor-Right {
+    width: 50%;
+  }
+}
+
+.Editor-Wrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.Editor-CodeMirror {
+  display: flex;
+  height: 100%;
+  width: 100%;
+
+  > textarea {
+    display: none;
   }
 
-  &-Wrapper {
-    display: flex;
+  .CodeMirror {
+    background-color: #282c34;
     height: 100%;
     width: 100%;
   }
+}
 
-  &-CodeMirror {
-    display: flex;
-    height: 100%;
-    width: 100%;
+.Editor-Left,
+.Editor-Right {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  width: 100%;
+}
 
-    > textarea {
-      display: none;
-    }
-
-    .CodeMirror {
-      background-color: #282c34;
-      height: 100%;
-      width: 100%;
-    }
-  }
-
-  &-Left,
-  &-Right {
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    width: 100%;
-  }
-
-  &-Left {
-    border-right: 1px solid #181a1f;
-  }
+.Editor-Left {
+  border-right: 1px solid #181a1f;
 }

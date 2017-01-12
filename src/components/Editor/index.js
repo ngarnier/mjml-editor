@@ -308,10 +308,20 @@ class Editor extends Component {
     })
   }
 
+  renderTab = item => (
+    <Tab
+      active={item.get('id') === this.props.activeTab}
+      key={item.get('id')}
+      onClick={this.handleTabChange.bind(this, item.get('id'))}
+      onRemove={this.handleTabRemove.bind(this, item.get('id'))}
+    >
+      {item.get('name')}
+    </Tab>
+  )
+
   render () {
 
     const {
-      activeTab,
       tabs,
     } = this.props
 
@@ -338,51 +348,61 @@ class Editor extends Component {
             <IconAdd />
           </Tab>
 
-          { tabs.map(item => (
-            <Tab
-              active={item.get('id') === activeTab}
-              key={item.get('id')}
-              onClick={this.handleTabChange.bind(this, item.get('id'))}
-              onRemove={this.handleTabRemove.bind(this, item.get('id'))}
-            >
-              {item.get('name')}
-            </Tab>
-          )) }
+          {tabs.map(this.renderTab)}
+
         </Tabs>
 
         {tabs.size > 0 && <TabActions />}
 
         <div className="Editor-Wrapper">
 
+          {/* -- GIST PANEL -- */}
+
           <GistPanel />
 
+          {/* -- LEFT PANEL -- */}
+
           <div className="Editor-Left">
+
             <div className="Editor-CodeMirror">
+
               <textarea
                 defaultValue={this.getCurrentValue()}
                 ref={r => this.textarea = r}
               />
-              { !showEditor &&
+
+              {!showEditor && (
                 <Empty>
                   <IconProgramming />
-                  ¯\_(ツ)_/¯
-                </Empty> }
+                  {'¯\\_(ツ)_/¯'}
+                </Empty>
+              )}
+
             </div>
-            { showEditor &&
-              cursor !== null &&
+
+            {/* -- LEFT PANEL FOOTER -- */}
+
+            {showEditor && cursor !== null && (
               <Footer
                 items={[
                   `${cursor.line + 1}:${cursor.ch + 1}`,
                 ]}
-              /> }
+              />
+            )}
+
           </div>
-          { showPreview &&
+
+          {/* -- RIGHT PANEL -- */}
+
+          {showPreview && (
             <div className="Editor-Right">
               <Iframe
                 onMaximize={this.handleMaximize}
                 maximize={true}
               />
-            </div> }
+            </div>
+          )}
+
         </div>
       </div>
     )

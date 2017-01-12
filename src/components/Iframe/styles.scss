@@ -1,60 +1,64 @@
 .Iframe {
   display: flex;
+  flex-grow: 1;
   flex-direction: column;
   width: 100%;
+  position: relative;
+}
 
-  &-Content {
-    display: flex;
+.Iframe-Content {
+  display: flex;
+  flex-grow: 1;
+  position: relative;
+
+  iframe {
+    border: 0;
     height: 100%;
     width: 100%;
+  }
+}
 
-    iframe {
-      border: 0;
-      height: 100%;
-      width: 100%;
+.Iframe-Toolbar {
+  display: flex;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+
+}
+
+.Iframe-Toolbar-Button {
+  background-color: #282c34;
+  border-radius: 3px;
+  cursor: pointer;
+  height: 40px;
+  position: relative;
+  width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    height: 20px;
+    width: 20px;
+
+    g {
+      fill: #d7dae0;
     }
   }
 
-  &-Toolbar {
-    display: flex;
+  &:after {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+    border-bottom-color: #181a1f;
+    border-radius: 3px;
+    border: 1px solid #181a1f;
+    bottom: 0;
+    content: "";
+    height: inherit;
+    left: 0;
     position: absolute;
-    top: 10px;
-    right: 10px;
-
-    &-Button {
-      background-color: #282c34;
-      border-radius: 3px;
-      cursor: pointer;
-      height: 40px;
-      position: relative;
-      width: 40px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-
-      svg {
-        height: 20px;
-        width: 20px;
-
-        g {
-          fill: #d7dae0;
-        }
-      }
-
-      &:after {
-        background-image: linear-gradient(rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
-        border-bottom-color: #181a1f;
-        border-radius: 3px;
-        border: 1px solid #181a1f;
-        bottom: 0;
-        content: "";
-        height: inherit;
-        left: 0;
-        position: absolute;
-        right: 0;
-        top: 0;
-        z-index: 1;
-      }
-    }
+    right: 0;
+    top: 0;
+    z-index: 1;
   }
 }

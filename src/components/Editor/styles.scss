@@ -4,33 +4,34 @@
 @import "~styles/codemirror/themes/one-dark.css";
 
 .Editor {
-  bottom: 0;
+  position: absolute;
+  top: 50px; left: 0; right: 0; bottom: 0;
+
   display: flex;
   flex-direction: column;
-  flex: 1;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 50px;
-}
 
-.Editor--preview {
-  .Editor-Left,
-  .Editor-Right {
-    width: 50%;
-  }
 }
 
 .Editor-Wrapper {
+  flex-grow: 1;
   display: flex;
-  height: 100%;
-  width: 100%;
+}
+
+.Editor-Left,
+.Editor-Right {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-basis: 50%;
+}
+
+.Editor-Left {
+  border-right: 1px solid #181a1f;
 }
 
 .Editor-CodeMirror {
-  display: flex;
-  height: 100%;
-  width: 100%;
+  position: relative;
+  flex-grow: 1;
 
   > textarea {
     display: none;
@@ -41,16 +42,4 @@
     height: 100%;
     width: 100%;
   }
-}
-
-.Editor-Left,
-.Editor-Right {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  width: 100%;
-}
-
-.Editor-Left {
-  border-right: 1px solid #181a1f;
 }

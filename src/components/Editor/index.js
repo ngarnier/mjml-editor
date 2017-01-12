@@ -365,19 +365,21 @@ class Editor extends Component {
           <div className="Editor-Left">
 
             <div className="Editor-CodeMirror">
+              <div className="sticky">
 
-              <textarea
-                defaultValue={this.getCurrentValue()}
-                ref={r => this.textarea = r}
-              />
+                <textarea
+                  defaultValue={this.getCurrentValue()}
+                  ref={r => this.textarea = r}
+                />
 
-              {!showEditor && (
-                <Empty>
-                  <IconProgramming />
-                  {'¯\\_(ツ)_/¯'}
-                </Empty>
-              )}
+                {!showEditor && (
+                  <Empty>
+                    <IconProgramming />
+                    {'¯\\_(ツ)_/¯'}
+                  </Empty>
+                )}
 
+              </div>
             </div>
 
             {/* -- LEFT PANEL FOOTER -- */}

@@ -47,7 +47,6 @@ class TabActions extends Component {
 
     const {
       saveCurrentTabToGist,
-      tab,
       isSavingGist,
       isDeletingGist,
       gistID,

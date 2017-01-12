@@ -7,6 +7,11 @@ import defaultTemplate from 'data/defaultTemplate'
 const state = fromJS({
   activeTab: null,
   tabs: [],
+
+  // used to compute ratio between editor and preview (in %)
+  // it can vary between 20 and 80
+  editorSize: 50,
+
 })
 
 function getActiveIndex (state) {

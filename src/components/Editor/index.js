@@ -49,6 +49,7 @@ import './styles.scss'
 @connect(
   ({ editor }) => ({
     activeTab: editor.get('activeTab'),
+    editorSize: editor.get('editorSize'),
     tabs: editor.get('tabs'),
   }),
   dispatch => ({
@@ -323,6 +324,7 @@ class Editor extends Component {
 
     const {
       tabs,
+      editorSize,
     } = this.props
 
     const {
@@ -362,7 +364,12 @@ class Editor extends Component {
 
           {/* -- LEFT PANEL -- */}
 
-          <div className="Editor-Left">
+          <div
+            className="Editor-Left"
+            style={{
+              flexBasis: `${editorSize}%`,
+            }}
+          >
 
             <div className="Editor-CodeMirror">
               <div className="sticky">
@@ -397,7 +404,12 @@ class Editor extends Component {
           {/* -- RIGHT PANEL -- */}
 
           {showPreview && (
-            <div className="Editor-Right">
+            <div
+              className="Editor-Right"
+              style={{
+                flexBasis: `${100 - editorSize}%`,
+              }}
+            >
               <Iframe
                 onMaximize={this.handleMaximize}
                 maximize={true}

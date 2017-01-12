@@ -25,6 +25,8 @@ export default handleActions({
   SET_ACTIVE_TAB: (state, { payload: id }) => state.set('activeTab', id),
   SET_TABS: (state, { payload }) => state.set('tabs', payload),
 
+  SET_EDITOR_SIZE: (state, { payload: percent }) => state.set('editorSize', percent),
+
   ADD_TAB: (state, { payload: file }) => {
 
     const tabs = state.get('tabs')

@@ -28,6 +28,7 @@ import Footer from 'components/Footer'
 import Iframe from 'components/Iframe'
 import TabActions from 'components/TabActions'
 import GistPanel from 'components/GistPanel'
+import DragResize from 'components/DragResize'
 
 import IconAdd from 'icons/Add'
 import IconProgramming from 'icons/Programming'
@@ -367,7 +368,7 @@ class Editor extends Component {
           <div
             className="Editor-Left"
             style={{
-              flexBasis: `${editorSize}%`,
+              flexBasis: `${showPreview ? editorSize : 100}%`,
             }}
           >
 
@@ -400,6 +401,10 @@ class Editor extends Component {
             )}
 
           </div>
+
+          {showPreview && (
+            <DragResize />
+          )}
 
           {/* -- RIGHT PANEL -- */}
 

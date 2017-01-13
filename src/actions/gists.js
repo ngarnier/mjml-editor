@@ -40,6 +40,7 @@ export function removeFileFromGist (name) {
     payload: {
       method: 'delete',
       url: '/github/gists',
+      loaderValue: name,
       data: state => {
         const gistID = state.gist.get('id')
         return {

@@ -36,6 +36,10 @@
   cursor: default;
   padding: 0 5px;
   user-select: none;
+
+  &.isDeleting {
+    font-style: italic;
+  }
 }
 
 .GistPanelFile--actions {

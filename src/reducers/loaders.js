@@ -4,10 +4,10 @@ import { fromJS } from 'immutable'
 const initialState = fromJS({})
 
 export default handleActions({
-  LOADING_START: (state, { payload: id }) => state.set(id, true),
-  LOADING_STOP: (state, { payload: id }) => state.remove(id),
+  LOADING_START: (state, { payload: { name, value = true } }) => state.set(name, value),
+  LOADING_STOP: (state, { payload: name }) => state.remove(name),
 }, initialState)
 
-export function isLoading (state, id) {
-  return state.loaders.get(id, false)
+export function isLoading (state, id, value = true) {
+  return state.loaders.get(id, false) === value
 }

@@ -10,26 +10,17 @@ import {
   addTab,
 } from 'actions/editor'
 
-import {
-  removeFileFromGist,
-} from 'actions/gists'
-
-import Button from 'components/Button'
-import Modal from 'components/Modal'
-
 import CloseIcon from 'icons/Close'
 import PencilIcon from 'icons/Pencil'
 
-@connect(state => ({
-  isDeletingGist: isLoading(state, 'REMOVE_FILE_FROM_GIST'),
+@connect((state, props) => ({
+  isDeleting: isLoading(state, 'REMOVE_FILE_FROM_GIST', props.file.get('filename')),
 }), {
   addTab,
-  removeFileFromGist,
 })
 class GistPanelFile extends Component {
 
   state = {
-    isModalDeleteOpened: false,
     isEditing: false,
     value: '',
   }
@@ -39,9 +30,6 @@ class GistPanelFile extends Component {
       this._input.focus()
     }
   }
-
-  openModalDelete = () => this.setState({ isModalDeleteOpened: true })
-  closeModalDelete = () => this.setState({ isModalDeleteOpened: false })
 
   setEditing = () => {
     this.setState({
@@ -96,16 +84,16 @@ class GistPanelFile extends Component {
   render () {
 
     const {
-      isModalDeleteOpened,
       isEditing,
       value,
     } = this.state
 
     const {
       file,
+      onDelete,
       addTab,
       activeTabName,
-      removeFileFromGist,
+      isDeleting,
     } = this.props
 
     return (
@@ -114,7 +102,14 @@ class GistPanelFile extends Component {
           active: file.get('filename') === activeTabName,
         })}
       >
-        {isEditing ? (
+        {isDeleting ? (
+          <div
+            key="name"
+            className="GistPanelFile--name isDeleting"
+          >
+            {'deleting...'}
+          </div>
+        ) : isEditing ? (
           <input
             ref={n => this._input = n}
             value={value}
@@ -143,29 +138,12 @@ class GistPanelFile extends Component {
             </div>
             <div
               className="GistPanelFile--action"
-              onClick={this.openModalDelete}
+              onClick={() => onDelete(file)}
             >
               <CloseIcon className="remove" />
             </div>
           </div>,
         ]}
-
-        <Modal
-          onClose={this.closeModalDelete}
-          isOpened={isModalDeleteOpened}
-        >
-          <div style={{ marginBottom: 20 }}>
-            {'Delete file?'}
-          </div>
-          <div className="horizontal-list">
-            <Button onClick={() => removeFileFromGist(file.get('filename'))}>
-              {'YES'}
-            </Button>
-            <Button onClick={this.closeModalDelete}>
-              {'NO'}
-            </Button>
-          </div>
-        </Modal>
 
       </div>
     )

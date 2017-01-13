@@ -23,13 +23,14 @@ export default store => next => async action => {
   const {
     url,
     method = 'get',
+    loaderValue = true,
     query,
     data,
     extra,
   } = action.payload
 
   // start loader which name is prefix
-  dispatch(startLoader(prefix))
+  dispatch(startLoader(prefix, loaderValue))
 
   try {
 

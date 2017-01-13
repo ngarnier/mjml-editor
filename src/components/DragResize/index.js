@@ -29,7 +29,6 @@ class DragResize extends Component {
 
   state = {
     isDragging: false,
-    barOffset: 0,
   }
 
   componentDidUpdate (prevProps, prevState) {
@@ -69,17 +68,15 @@ class DragResize extends Component {
 
   measureX = (eventX) => window.requestAnimationFrame(() => {
 
-    if (!this.state.isDragging) { return }
+    if (!this.state.isDragging || eventX === 0) { return }
 
     const offsetFromCenter = eventX - this._centerOffset
     const nb = Math.round(offsetFromCenter / STEP)
     const offset = nb * STEP
 
-    if (offset !== this.state.barOffset) {
-      this.setState({
-        barOffset: offset,
-      })
+    if (offset !== this._lastBarOffset) {
       this._lastBarOffset = offset
+      this.emitPercent()
     }
 
   })
@@ -103,7 +100,6 @@ class DragResize extends Component {
 
     this.setState({
       isDragging: false,
-      barOffset: 0,
     })
 
   }
@@ -111,12 +107,6 @@ class DragResize extends Component {
   setBarRef = n => this._bar = n
 
   render () {
-
-    const {
-      isDragging,
-      barOffset,
-    } = this.state
-
     return (
       <div
         className="DragResize"
@@ -128,9 +118,6 @@ class DragResize extends Component {
         <div
           ref={this.setBarRef}
           className="bar"
-          style={{
-            transform: `translate3d(${isDragging ? barOffset : 0}px, 0, 0)`,
-          }}
         />
       </div>
     )

@@ -61,6 +61,13 @@ export default (socket, session) => {
         socket.handshake.session.save()
       })
 
+      socket.on('gist-open', ({ gistID }) => {
+        console.log('gist-open', gistID)
+        socket.broadcast.to(socketRoom).emit('url-change', {
+          type: 'replace',
+          url: `/gists/${gistID}`,
+        })
+      })
     }
   })
 }

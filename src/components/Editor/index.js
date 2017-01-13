@@ -19,7 +19,7 @@ import {
   Tab,
 } from 'components/Tabs'
 
-import socket from 'getClientSocket'
+import socket from 'helpers/getClientSocket'
 
 import { addTab } from 'actions/editor'
 

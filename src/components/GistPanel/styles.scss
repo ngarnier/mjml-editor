@@ -10,7 +10,6 @@
   height: 30px;
 
   display: flex;
-  align-items: center;
 
   &:hover {
     background: rgba(black, 0.1);
@@ -27,6 +26,8 @@
 }
 
 .GistPanelFile--name {
+  display: flex;
+  align-items: center;
   color: #aaa;
   overflow: hidden;
   white-space: pre;
@@ -64,5 +65,17 @@
     .remove {
       fill: #e06c75;
     }
+  }
+}
+
+.GistPanelFile--input {
+  color: white;
+  padding: 0 10px;
+  display: block;
+  width: 100%;
+  outline: none;
+  border: 1px solid transparent;
+  &:focus {
+    border-color: #528bff;
   }
 }

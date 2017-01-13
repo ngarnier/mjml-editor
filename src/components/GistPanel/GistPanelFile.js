@@ -3,6 +3,10 @@ import cx from 'classnames'
 import { connect } from 'react-redux'
 
 import {
+  isLoading,
+} from 'reducers/loaders'
+
+import {
   addTab,
 } from 'actions/editor'
 
@@ -10,16 +14,22 @@ import {
   removeFileFromGist,
 } from 'actions/gists'
 
+import Button from 'components/Button'
+import Modal from 'components/Modal'
+
 import CloseIcon from 'icons/Close'
 import PencilIcon from 'icons/Pencil'
 
-@connect(null, {
+@connect(state => ({
+  isDeletingGist: isLoading(state, 'REMOVE_FILE_FROM_GIST'),
+}), {
   addTab,
   removeFileFromGist,
 })
 class GistPanelFile extends Component {
 
   state = {
+    isModalDeleteOpened: false,
     isEditing: false,
     value: '',
   }
@@ -29,6 +39,9 @@ class GistPanelFile extends Component {
       this._input.focus()
     }
   }
+
+  openModalDelete = () => this.setState({ isModalDeleteOpened: true })
+  closeModalDelete = () => this.setState({ isModalDeleteOpened: false })
 
   setEditing = () => {
     this.setState({
@@ -45,6 +58,19 @@ class GistPanelFile extends Component {
   }
 
   saveEditing = () => {
+
+    const {
+      value,
+    } = this.state
+
+    if (!value) { return }
+
+    const realValue = value.endsWith('.mjml')
+      ? value
+      : `${value}.mjml`
+
+    console.log(`saving ${realValue}`)
+
     this.stopEditing()
   }
 
@@ -70,6 +96,7 @@ class GistPanelFile extends Component {
   render () {
 
     const {
+      isModalDeleteOpened,
       isEditing,
       value,
     } = this.state
@@ -94,6 +121,7 @@ class GistPanelFile extends Component {
             className="GistPanelFile--input"
             onKeyDown={this.handleKeyDown}
             onChange={this.handleChange}
+            onBlur={this.saveEditing}
           />
         ) : [
           <div
@@ -107,20 +135,38 @@ class GistPanelFile extends Component {
             key="actions"
             className="GistPanelFile--actions"
           >
-            <div className="GistPanelFile--action">
-              <PencilIcon
-                onClick={this.setEditing}
-                className="pencil"
-              />
+            <div
+              className="GistPanelFile--action"
+              onClick={this.setEditing}
+            >
+              <PencilIcon className="pencil" />
             </div>
-            <div className="GistPanelFile--action">
-              <CloseIcon
-                onClick={() => removeFileFromGist(file.get('filename'))}
-                className="remove"
-              />
+            <div
+              className="GistPanelFile--action"
+              onClick={this.openModalDelete}
+            >
+              <CloseIcon className="remove" />
             </div>
           </div>,
         ]}
+
+        <Modal
+          onClose={this.closeModalDelete}
+          isOpened={isModalDeleteOpened}
+        >
+          <div style={{ marginBottom: 20 }}>
+            {'Delete file?'}
+          </div>
+          <div className="horizontal-list">
+            <Button onClick={() => removeFileFromGist(file.get('filename'))}>
+              {'YES'}
+            </Button>
+            <Button onClick={this.closeModalDelete}>
+              {'NO'}
+            </Button>
+          </div>
+        </Modal>
+
       </div>
     )
   }

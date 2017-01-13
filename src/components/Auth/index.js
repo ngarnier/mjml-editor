@@ -17,19 +17,31 @@ import {
   DropdownItem,
 } from 'components/Dropdown'
 
+import socket from 'helpers/getClientSocket'
+
 import IconGithub from 'icons/Github'
 
 import './styles.scss'
 
 @connect(
-  ({ user }) => ({
-    user,
+  ({ user }) => ({ user }),
+  dispatch => ({
+    logout: () => dispatch({ type: 'LOGOUT' }),
   })
 )
 class Auth extends Component {
 
   state = {
     showDropdown: false,
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.user === null &&
+        this.props.user !== null) {
+      this.setState({
+        showDropdown: false,
+      })
+    }
   }
 
   handleToggleDropdown = () => this.setState(prev => ({
@@ -39,6 +51,11 @@ class Auth extends Component {
   handleDropdownClose = () => this.setState({
     showDropdown: false,
   })
+
+  handleClickLogout = () => {
+    socket.emit('logout')
+    this.props.logout()
+  }
 
   render () {
     const {
@@ -79,10 +96,8 @@ class Auth extends Component {
                 transform: `translate3d(0, ${style.y}px, 0)`,
               }}
             >
-              <DropdownItem>
-                <a href="/logout">
-                  Sign out
-                </a>
+              <DropdownItem onClick={this.handleClickLogout}>
+                Sign out
               </DropdownItem>
             </Dropdown> }
         </Motion>

@@ -6,18 +6,63 @@
   border-right: 1px solid #181a1f;
 }
 
-.GistPanel--file {
-  padding: 10px 5px;
-  cursor: pointer;
+.GistPanelFile {
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: rgba(black, 0.1);
+    .GistPanelFile--actions {
+      display: flex;
+    }
+  }
+
+  &.active {
+    .GistPanelFile--name {
+      color: white;
+    }
+  }
+}
+
+.GistPanelFile--name {
   color: #aaa;
   overflow: hidden;
   white-space: pre;
   text-overflow: ellipsis;
-  &:hover {
-    background: rgba(black, 0.1);
+  flex-grow: 1;
+  cursor: default;
+  padding: 0 5px;
+  user-select: none;
+}
+
+.GistPanelFile--actions {
+  align-self: stretch;
+  display: flex;
+  flex-shrink: 0;
+  display: none;
+}
+
+.GistPanelFile--action {
+  color: #aaa;
+  width: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 15px;
+    fill: #aaa;
   }
 
-  &.active {
-    color: white;
+  &:hover {
+    .pencil {
+      fill: #528bff;
+    }
+    .remove {
+      fill: #e06c75;
+    }
   }
 }

@@ -1,16 +1,10 @@
-import React, {
-  Component,
-} from 'react'
+import React, { Component } from 'react'
 
-import {
-  RoutesProvider,
-  MatchWithRoutes,
-} from 'react-router-addons-routes'
+import { RoutesProvider, MatchWithRoutes } from 'react-router-addons-routes'
 
 import routes from 'routes'
 
 import './styles.scss'
-import 'styles/utils.scss'
 
 class Application extends Component {
 

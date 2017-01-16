@@ -1,6 +1,4 @@
-import React, {
-  Component,
-} from 'react'
+import React, { Component, PropTypes } from 'react'
 
 import { loadGist } from 'actions/gists'
 
@@ -11,11 +9,13 @@ import Notifications from 'components/Notifications'
 
 import IconMjml from 'icons/Mjml'
 
-import socket from 'helpers/getClientSocket'
-
 import './styles.scss'
 
 class Home extends Component {
+
+  static contextTypes = {
+    socket: PropTypes.object,
+  }
 
   static load = ({ dispatch, params }) => {
     if (params.gistID) {
@@ -24,7 +24,11 @@ class Home extends Component {
   }
 
   componentDidMount () {
-    socket.on('url-change', ({ type, url }) => {
+    const {
+      socket,
+    } = this.context
+
+    socket.on('URL_CHANGE', ({ type, url }) => {
       switch (type) {
         case 'replace':
           history.replaceState({}, '', url)

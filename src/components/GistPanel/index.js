@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
+
 import cx from 'classnames'
 import { connect } from 'react-redux'
-
-import './styles.scss'
 
 import { getActiveTab } from 'reducers/editor'
 
 import { addTab } from 'actions/editor'
+
+import './styles.scss'
 
 @connect(state => ({
   gist: state.gist,

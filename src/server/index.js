@@ -5,9 +5,7 @@ import path from 'path'
 import expressSession from 'express-session'
 import passport from 'passport'
 import uuid from 'uuid/v4'
-import {
-  Strategy as StrategyGithub,
-} from 'passport-github2'
+import { Strategy as StrategyGithub } from 'passport-github2'
 
 import socketEvents from './socketEvents'
 
@@ -59,10 +57,6 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 app.use((req, res, next) => {
-  if (!req.session.socketRoom) {
-    req.session.socketRoom = uuid()
-  }
-
   if (!req.session.editor) {
     req.session.editor = {}
   }

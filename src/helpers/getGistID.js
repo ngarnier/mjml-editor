@@ -1,5 +1,5 @@
-const REGEXP_ID = /https:\/\/gist\.github\.com\/([^\/]*\/)?([^\.git]{32})/
-const REGEXP_ID_LENGTH = /.{32}/
+const REGEXP_ID = /^https:\/\/gist\.github\.com\/([^\/]*\/)?(.{32})(\.git)?$/
+const REGEXP_ID_LENGTH = /[\d\w]{32}/
 
 export default function getGistID (gistValue) {
   const matches = gistValue.match(REGEXP_ID)

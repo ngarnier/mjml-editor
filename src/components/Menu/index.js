@@ -1,9 +1,13 @@
-import React, {
-  Component,
-} from 'react'
+import React, { Component, PropTypes } from 'react'
 
-import socket from 'helpers/getClientSocket'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+
 import getGistID from 'helpers/getGistID'
+
+import { loadGist } from 'actions/gists'
+
+import { isLoading } from 'reducers/loaders'
 
 import Input from 'components/Input'
 import Modal from 'components/Modal'
@@ -11,11 +15,34 @@ import Button from 'components/Button'
 
 import './styles.scss'
 
+@connect(state => ({
+  isLoadingGist: isLoading(state, 'LOAD_GIST'),
+}), dispatch => ({
+
+  // bind raw actions with dispatch
+  ...bindActionCreators({
+
+    // load a gist
+    loadGist,
+
+  }, dispatch),
+
+}))
 class Menu extends Component {
 
   state = {
     gistValue: '',
     isModalOpenOpened: false,
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.isLoadingGist === true &&
+        this.props.isLoadingGist === false) {
+      this.setState({
+        gistValue: '',
+        isModalOpenOpened: false,
+      })
+    }
   }
 
   componentDidUpdate () {
@@ -38,6 +65,14 @@ class Menu extends Component {
 
   openGist = e => {
     const {
+      socket,
+    } = this.context
+
+    const {
+      loadGist,
+    } = this.props
+
+    const {
       gistValue,
     } = this.state
 
@@ -46,11 +81,15 @@ class Menu extends Component {
     const gistID = getGistID(gistValue)
 
     if (gistID) {
-      socket.emit('gist-open', { gistID })
+      loadGist(gistID)
     }
   }
 
   render () {
+    const {
+      isLoadingGist,
+    } = this.props
+
     const {
       isModalOpenOpened,
       gistValue,
@@ -80,7 +119,10 @@ class Menu extends Component {
               value={gistValue}
             />
             <div>
-              <Button onClick={this.openGist}>
+              <Button
+                onClick={this.openGist}
+                isLoading={isLoadingGist}
+              >
                 Open
               </Button>
             </div>

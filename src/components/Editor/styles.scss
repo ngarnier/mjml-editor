@@ -4,53 +4,47 @@
 @import "~styles/codemirror/themes/one-dark.css";
 
 .Editor {
-  bottom: 0;
+  position: absolute;
+  top: 50px; left: 0; right: 0; bottom: 0;
+
   display: flex;
   flex-direction: column;
-  flex: 1;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 50px;
 
-  &--preview {
-    .Editor-Left,
-    .Editor-Right {
-      width: 50%;
-    }
+}
+
+.Editor-Wrapper {
+  flex-grow: 1;
+  display: flex;
+}
+
+.Editor-Left,
+.Editor-Right {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-basis: 50%;
+  // lol, not sure about that
+  // transition: 150ms ease-in-out flex-basis;
+}
+
+.Editor-Left {
+  border-right: 1px solid #181a1f;
+}
+
+.Editor-CodeMirror {
+  position: relative;
+  flex-grow: 1;
+
+  // if I put `display: none` we can't type anymore :D
+  textarea {
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
   }
 
-  &-Wrapper {
-    display: flex;
+  .CodeMirror {
+    background-color: #282c34;
     height: 100%;
     width: 100%;
-  }
-
-  &-CodeMirror {
-    display: flex;
-    height: 100%;
-    width: 100%;
-
-    > textarea {
-      display: none;
-    }
-
-    .CodeMirror {
-      background-color: #282c34;
-      height: 100%;
-      width: 100%;
-    }
-  }
-
-  &-Left,
-  &-Right {
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    width: 100%;
-  }
-
-  &-Left {
-    border-right: 1px solid #181a1f;
   }
 }

@@ -95,19 +95,25 @@ class Iframe extends Component {
               </div> }
           </div> }
         <div className="Iframe-Content">
-          <iframe
-            ref={r => this.iframe = r}
-            style={{
-              display: preview.html !== ''
-                ? 'block'
-                : 'none',
-            }}
-          />
-          { preview.html === '' &&
-            <Empty>
-              <IconHtml />
-              ಠ_ಠ
-            </Empty> }
+          <div className="sticky">
+
+            <iframe
+              ref={r => this.iframe = r}
+              style={{
+                display: preview.html !== ''
+                  ? 'block'
+                  : 'none',
+              }}
+            />
+
+            {preview.html === '' && (
+              <Empty>
+                <IconHtml />
+                ಠ_ಠ
+              </Empty>
+            )}
+
+          </div>
         </div>
         { preview.html !== '' &&
           <Footer

@@ -69,16 +69,18 @@ export default async function render (req, res) {
       store.dispatch(setUser(req.user.profile._json))
     }
 
-    if (req.session.editor) {
-      const {
-        editor,
-      } = req.session
+    const {
+      editor,
+    } = req.session
 
+    if (editor.activeTab) {
       store.dispatch({
         type: 'SET_ACTIVE_TAB',
         payload: editor.activeTab,
       })
+    }
 
+    if (editor.tabs) {
       store.dispatch({
         type: 'SET_TABS',
         payload: fromJS(editor.tabs),

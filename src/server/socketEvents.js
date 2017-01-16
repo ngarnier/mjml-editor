@@ -30,15 +30,18 @@ export default (socket, session) => {
       socketRoom,
     } = socket.handshake.session
 
-    if (!socket.handshake.session.editor) {
-      socket.handshake.session.editor = {}
-    }
-
     if (socketRoom) {
       socket.join(socketRoom)
 
       socket.on('event', data => {
         socket.broadcast.to(socketRoom).emit(data)
+      })
+
+      socket.on('logout', () => {
+        delete socket.handshake.session.passport
+        delete socket.handshake.session.user
+
+        socket.handshake.session.save()
       })
 
       socket.on('mjml-to-html', ({ mjml }) => {

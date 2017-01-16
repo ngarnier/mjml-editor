@@ -28,6 +28,7 @@ import Footer from 'components/Footer'
 import Iframe from 'components/Iframe'
 import TabActions from 'components/TabActions'
 import GistPanel from 'components/GistPanel'
+import DragResize from 'components/DragResize'
 
 import IconAdd from 'icons/Add'
 import IconProgramming from 'icons/Programming'
@@ -49,6 +50,7 @@ import './styles.scss'
 @connect(
   ({ editor }) => ({
     activeTab: editor.get('activeTab'),
+    editorSize: editor.get('editorSize'),
     tabs: editor.get('tabs'),
   }),
   dispatch => ({
@@ -308,11 +310,22 @@ class Editor extends Component {
     })
   }
 
+  renderTab = item => (
+    <Tab
+      active={item.get('id') === this.props.activeTab}
+      key={item.get('id')}
+      onClick={this.handleTabChange.bind(this, item.get('id'))}
+      onRemove={this.handleTabRemove.bind(this, item.get('id'))}
+    >
+      {item.get('name')}
+    </Tab>
+  )
+
   render () {
 
     const {
-      activeTab,
       tabs,
+      editorSize,
     } = this.props
 
     const {
@@ -338,51 +351,77 @@ class Editor extends Component {
             <IconAdd />
           </Tab>
 
-          { tabs.map(item => (
-            <Tab
-              active={item.get('id') === activeTab}
-              key={item.get('id')}
-              onClick={this.handleTabChange.bind(this, item.get('id'))}
-              onRemove={this.handleTabRemove.bind(this, item.get('id'))}
-            >
-              {item.get('name')}
-            </Tab>
-          )) }
+          {tabs.map(this.renderTab)}
+
         </Tabs>
 
         {tabs.size > 0 && <TabActions />}
 
         <div className="Editor-Wrapper">
 
+          {/* -- GIST PANEL -- */}
+
           <GistPanel />
 
-          <div className="Editor-Left">
+          {/* -- LEFT PANEL -- */}
+
+          <div
+            className="Editor-Left"
+            style={{
+              flexBasis: `${showPreview ? editorSize : 100}%`,
+            }}
+          >
+
             <div className="Editor-CodeMirror">
-              <textarea
-                defaultValue={this.getCurrentValue()}
-                ref={r => this.textarea = r}
-              />
-              { !showEditor &&
-                <Empty>
-                  <IconProgramming />
-                  ¯\_(ツ)_/¯
-                </Empty> }
+              <div className="sticky">
+
+                <textarea
+                  defaultValue={this.getCurrentValue()}
+                  ref={r => this.textarea = r}
+                />
+
+                {!showEditor && (
+                  <Empty>
+                    <IconProgramming />
+                    {'¯\\_(ツ)_/¯'}
+                  </Empty>
+                )}
+
+              </div>
             </div>
-            { showEditor &&
-              cursor !== null &&
+
+            {/* -- LEFT PANEL FOOTER -- */}
+
+            {showEditor && cursor !== null && (
               <Footer
                 items={[
                   `${cursor.line + 1}:${cursor.ch + 1}`,
                 ]}
-              /> }
+              />
+            )}
+
           </div>
-          { showPreview &&
-            <div className="Editor-Right">
+
+          {showPreview && (
+            <DragResize />
+          )}
+
+          {/* -- RIGHT PANEL -- */}
+
+          {showPreview && (
+            <div
+              className="Editor-Right"
+              style={{
+                flexBasis: `${100 - editorSize}%`,
+              }}
+            >
               <Iframe
                 onMaximize={this.handleMaximize}
                 maximize={true}
               />
-            </div> }
+            </div>
+          )}
+
         </div>
       </div>
     )

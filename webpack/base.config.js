@@ -4,7 +4,9 @@ import path from 'path'
 import webpack from 'webpack'
 import mapValues from 'lodash/mapValues'
 
-import * as globals from '../src/globals'
+require('dotenv').config()
+
+const globals = require('../src/globals')
 
 const dist = path.resolve(__dirname, '../dist')
 const styles = path.resolve(__dirname, '../src/styles')

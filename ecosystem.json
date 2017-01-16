@@ -17,7 +17,7 @@
       "ref"        : "origin/feature/pm2",
       "repo"       : "git@github.com:lohek/mjml-editor.git",
       "path"       : "/var/www/mjml-editor",
-      "post-deploy": "yarn && yarn run build && pm2 startOrRestart ecosystem.json --env production"
+      "post-deploy": "yarn && NODE_ENV=production yarn run build && pm2 startOrRestart ecosystem.json --env production"
     }
   }
 }

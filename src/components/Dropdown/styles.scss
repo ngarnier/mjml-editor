@@ -23,6 +23,11 @@
     padding: 10px;
     user-select: none;
 
+    &--action {
+      cursor: pointer;
+      user-select: none;
+    }
+
     a {
       color: #21252b;
       display: block;

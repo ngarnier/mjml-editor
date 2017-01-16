@@ -6,6 +6,7 @@
     "react/jsx-boolean-value": 0,
     "no-empty": 0,
     "id-length": 0,
+    "no-inline-comments": 0,
   },
   "globals": {
     "Promise": false,

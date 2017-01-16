@@ -12,6 +12,16 @@
 
 }
 
+.Editor--onResize {
+  .Editor-Left:before,
+  .Editor-Right:before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 3;
+  }
+}
+
 .Editor-Wrapper {
   flex-grow: 1;
   display: flex;

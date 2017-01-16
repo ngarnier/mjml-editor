@@ -72,6 +72,7 @@ class Editor extends Component {
 
   state = {
     cursor: null,
+    onResize: false,
     showEditor: this.props.tabs.size > 0,
     showPreview: true,
   }
@@ -333,6 +334,7 @@ class Editor extends Component {
 
     const {
       cursor,
+      onResize,
       showEditor,
       showPreview,
     } = this.state
@@ -341,6 +343,7 @@ class Editor extends Component {
       <div
         className={cx('Editor', {
           'Editor--preview': showPreview,
+          'Editor--onResize': showPreview && onResize,
         })}
       >
 
@@ -406,7 +409,10 @@ class Editor extends Component {
           </div>
 
           {showPreview && (
-            <DragResize />
+            <DragResize
+              onDragStart={() => this.setState({ onResize: true })}
+              onDragEnd={() => this.setState({ onResize: false })}
+            />
           )}
 
           {/* -- RIGHT PANEL -- */}

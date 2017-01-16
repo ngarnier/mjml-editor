@@ -2,6 +2,8 @@ import React, {
   Component,
 } from 'react'
 
+import cx from 'classnames'
+
 import './styles.scss'
 
 class Dropdown extends Component {
@@ -68,7 +70,9 @@ class DropdownItem extends Component {
 
     return (
       <div
-        className="Dropdown-Item"
+        className={cx('Dropdown-Item', {
+          'Dropdown-Item--action': onClick,
+        })}
         onClick={onClick}
       >
         {children}

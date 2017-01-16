@@ -45,7 +45,7 @@ passport.use(new StrategyGithub({
   })
 }))
 
-if (process.env.NODE_ENV === 'production') {
+if (__PROD__) {
   app.use(compression())
   app.use('/dist', express.static(path.join(__dirname, '../../dist')))
 }
@@ -63,6 +63,14 @@ app.use((req, res, next) => {
     req.session.socketRoom = uuid()
   }
 
+  if (!req.session.editor) {
+    req.session.editor = {}
+  }
+
+  if (req.user && !req.session.user) {
+    req.session.user = req.user
+  }
+
   next()
 })
 
@@ -70,9 +78,7 @@ app.use(auth)
 app.use('/api/github', github)
 app.use(render)
 
-io.on('connection', socket => {
-  socketEvents(socket, session)
-})
+io.on('connection', socket => socketEvents(socket, session))
 
 server.listen(port, err => {
   if (err) {

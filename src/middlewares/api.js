@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import socket from 'helpers/getClientSocket'
+
 import { startLoader, stopLoader } from 'actions/loaders'
 import { addNotif } from 'actions/notifications'
 
@@ -26,6 +28,7 @@ export default store => next => async action => {
     query,
     data,
     extra,
+    socketOnSuccess,
   } = action.payload
 
   // start loader which name is prefix
@@ -56,9 +59,21 @@ export default store => next => async action => {
       ? { extra, data: res.data }
       : res.data
 
+    const typeSuccess = `${prefix}_SUCCESS`
+
+    if (__BROWSER__ && socketOnSuccess) {
+      const dataSocket = typeof socketOnSuccess === 'function'
+        ? socketOnSuccess(successPayload)
+        : typeof socketOnSuccess === 'boolean'
+          ? undefined
+          : socketOnSuccess
+
+      socket.emit(typeSuccess, dataSocket)
+    }
+
     // dispatch request result as success
     dispatch({
-      type: `${prefix}_SUCCESS`,
+      type: typeSuccess,
       payload: successPayload,
     })
 

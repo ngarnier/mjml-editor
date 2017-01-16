@@ -1,7 +1,5 @@
 import filesize from 'filesize'
-import {
-  mjml2html,
-} from 'mjml'
+import { mjml2html } from 'mjml'
 
 function renderMJML (mjml) {
   let html = ''
@@ -22,48 +20,46 @@ function renderMJML (mjml) {
   }
 }
 
-export default (socket, session) => {
-  session(socket.handshake, {}, err => {
-    if (err) { return }
+export default (socket, session) => session(socket.handshake, {}, err => {
+  if (err) { return }
 
-    const {
-      socketRoom,
-    } = socket.handshake.session
+  if (!socket.handshake.session.editor) {
+    socket.handshake.session.editor = {}
+  }
 
-    if (socketRoom) {
-      socket.join(socketRoom)
+  socket.on('event', data => socket.emit(data))
 
-      socket.on('event', data => {
-        socket.broadcast.to(socketRoom).emit(data)
-      })
+  socket.on('logout', () => {
+    delete socket.handshake.session.passport
+    delete socket.handshake.session.user
 
-      socket.on('logout', () => {
-        delete socket.handshake.session.passport
-        delete socket.handshake.session.user
-
-        socket.handshake.session.save()
-      })
-
-      socket.on('mjml-to-html', ({ mjml }) => {
-        const preview = renderMJML(mjml)
-
-        socket.broadcast.to(socketRoom).emit('preview-html', {
-          preview,
-        })
-      })
-
-      socket.on('editor-set-active-tab', ({ activeTab }) => {
-        socket.handshake.session.editor.activeTab = activeTab
-
-        socket.handshake.session.save()
-      })
-
-      socket.on('editor-set-tabs', ({ tabs }) => {
-        socket.handshake.session.editor.tabs = tabs
-
-        socket.handshake.session.save()
-      })
-
-    }
+    socket.handshake.session.save()
   })
-}
+
+  socket.on('mjml-to-html', ({ mjml }) => {
+    const preview = renderMJML(mjml)
+
+    socket.emit('preview-html', {
+      preview,
+    })
+  })
+
+  socket.on('editor-set-active-tab', ({ activeTab }) => {
+    socket.handshake.session.editor.activeTab = activeTab
+
+    socket.handshake.session.save()
+  })
+
+  socket.on('editor-set-tabs', ({ tabs }) => {
+    socket.handshake.session.editor.tabs = tabs
+
+    socket.handshake.session.save()
+  })
+
+  socket.on('LOAD_GIST_SUCCESS', ({ gistID }) => {
+    socket.emit('URL_CHANGE', {
+      type: 'replace',
+      url: `/gists/${gistID}`,
+    })
+  })
+})

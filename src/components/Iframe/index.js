@@ -1,8 +1,4 @@
-import React, {
-  Component,
-} from 'react'
-
-import io from 'socket.io-client'
+import React, { Component, PropTypes } from 'react'
 
 import Empty from 'components/Empty'
 import Footer from 'components/Footer'
@@ -15,6 +11,10 @@ import './styles.scss'
 
 class Iframe extends Component {
 
+  static contextTypes = {
+    socket: PropTypes.object,
+  }
+
   state = {
     preview: {
       html: '',
@@ -23,14 +23,16 @@ class Iframe extends Component {
 
   componentDidMount () {
     const {
+      socket,
+    } = this.context
+
+    const {
       minimize,
     } = this.props
 
-    this.socket = io.connect()
+    socket.emit('event', 'send-html-to-preview')
 
-    this.socket.emit('event', 'send-html-to-preview')
-
-    this.socket.on('preview-html', ({ preview }) => {
+    socket.on('preview-html', ({ preview }) => {
       if (this.iframe) {
         this.setHTML(preview.html)
 
@@ -42,7 +44,7 @@ class Iframe extends Component {
 
     if (minimize) {
       window.addEventListener('beforeunload', () => {
-        this.socket.emit('event', 'minimize-preview')
+        socket.emit('event', 'minimize-preview')
       })
     }
   }

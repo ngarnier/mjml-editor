@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+
 import Mortal from 'react-mortal'
 
 import './styles.scss'

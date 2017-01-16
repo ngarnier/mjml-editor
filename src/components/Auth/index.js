@@ -1,23 +1,11 @@
-import React, {
-  Component,
-} from 'react'
+import React, { Component, PropTypes } from 'react'
 
-import {
-  connect,
-} from 'react-redux'
+import { connect } from 'react-redux'
 
 import cx from 'classnames'
-import {
-  Motion,
-  spring,
-} from 'react-motion'
+import { Motion, spring } from 'react-motion'
 
-import {
-  Dropdown,
-  DropdownItem,
-} from 'components/Dropdown'
-
-import socket from 'helpers/getClientSocket'
+import { Dropdown, DropdownItem } from 'components/Dropdown'
 
 import IconGithub from 'icons/Github'
 
@@ -30,6 +18,10 @@ import './styles.scss'
   })
 )
 class Auth extends Component {
+
+  static contextTypes = {
+    socket: PropTypes.object,
+  }
 
   state = {
     showDropdown: false,
@@ -53,7 +45,12 @@ class Auth extends Component {
   })
 
   handleClickLogout = () => {
+    const {
+      socket,
+    } = this.context
+
     socket.emit('logout')
+
     this.props.logout()
   }
 

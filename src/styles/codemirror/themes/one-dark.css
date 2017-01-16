@@ -32,7 +32,7 @@
 }
 .cm-s-one-dark .CodeMirror-linenumber {
   padding: 0 8px 0 10px;
-  min-width: 20px;
+  min-width: 24px;
   text-align: right;
   white-space: nowrap;
   color: #636d83;

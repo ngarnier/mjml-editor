@@ -1,34 +1,20 @@
-import React, {
-  Component,
-} from 'react'
-
-import {
-  bindActionCreators,
-} from 'redux'
+import React, { Component, PropTypes } from 'react'
 
 import debounce from 'lodash/debounce'
 
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import cx from 'classnames'
-
-import {
-  connect,
-} from 'react-redux'
-
-import {
-  Tabs,
-  Tab,
-} from 'components/Tabs'
-
-import socket from 'helpers/getClientSocket'
 
 import { addTab } from 'actions/editor'
 
+import { Tabs, Tab } from 'components/Tabs'
+import DragResize from 'components/DragResize'
 import Empty from 'components/Empty'
 import Footer from 'components/Footer'
+import GistPanel from 'components/GistPanel'
 import Iframe from 'components/Iframe'
 import TabActions from 'components/TabActions'
-import GistPanel from 'components/GistPanel'
-import DragResize from 'components/DragResize'
 
 import IconAdd from 'icons/Add'
 import IconProgramming from 'icons/Programming'
@@ -76,6 +62,10 @@ import './styles.scss'
 )
 class Editor extends Component {
 
+  static contextTypes = {
+    socket: PropTypes.object,
+  }
+
   _codeMirror = null // eslint-disable-line react/sort-comp
 
   _history = {}
@@ -87,6 +77,10 @@ class Editor extends Component {
   }
 
   componentDidMount () {
+    const {
+      socket,
+    } = this.context
+
     const {
       showEditor,
     } = this.state
@@ -152,6 +146,10 @@ class Editor extends Component {
 
   componentDidUpdate (prevProps) {
     const {
+      socket,
+    } = this.context
+
+    const {
       activeTab,
       tabs,
     } = this.props
@@ -162,6 +160,7 @@ class Editor extends Component {
 
     if (activeTab !== prevProps.activeTab) {
       socket.emit('editor-set-active-tab', { activeTab })
+
       if (showEditor) {
         this.changeTab()
       }
@@ -171,6 +170,10 @@ class Editor extends Component {
   }
 
   componentWillUnmount () {
+    const {
+      socket,
+    } = this.context
+
     socket.removeAllListeners('send-html-to-preview')
     socket.removeAllListeners('minimize-preview')
   }
@@ -255,7 +258,7 @@ class Editor extends Component {
   }, 25)
 
   saveDebounceTabs = debounce(tabs => {
-    socket.emit('editor-set-tabs', { tabs: tabs.toJS() })
+    this.context.socket.emit('editor-set-tabs', { tabs: tabs.toJS() })
   }, 250)
 
   destroyEditor () {
@@ -305,7 +308,7 @@ class Editor extends Component {
   }, 250)
 
   renderHTML = mjml => {
-    socket.emit('mjml-to-html', {
+    this.context.socket.emit('mjml-to-html', {
       mjml,
     })
   }

@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+
 import thunk from 'redux-thunk'
 import { fromJS } from 'immutable'
 
@@ -9,13 +10,7 @@ import {
   compose,
 } from 'redux'
 
-import {
-  Provider,
-} from 'react-redux'
-
-import {
-  BrowserRouter,
-} from 'react-router'
+import Wrapper from 'containers/Wrapper'
 
 import reducers from 'reducers'
 
@@ -42,11 +37,9 @@ const roolEl = document.getElementById('root')
 
 function render (Component) {
   ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter>
-        <Component />
-      </BrowserRouter>
-    </Provider>,
+    <Wrapper store={store}>
+      <Component />
+    </Wrapper>,
     roolEl
   )
 }

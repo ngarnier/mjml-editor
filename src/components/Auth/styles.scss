@@ -1,13 +1,15 @@
 .Auth {
   color: #d7dae0;
   display: flex;
+  flex: 1;
   font-size: 13px;
   justify-content: flex-end;
   padding: 0 10px;
   position: relative;
-  width: 100%;
 
   &-Signin {
+    user-select: none;
+
     a {
       align-items: center;
       color: #d7dae0;

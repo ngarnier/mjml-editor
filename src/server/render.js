@@ -1,38 +1,17 @@
 import React from 'react'
+import { renderToStaticMarkup, renderToString } from 'react-dom/server'
+
+import { createServerRenderContext, ServerRouter } from 'react-router'
+import { createStore, applyMiddleware } from 'redux'
+import { fromJS } from 'immutable'
+import { matchRoutesToLocation } from 'react-router-addons-routes'
+import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 
-import {
-  fromJS,
-} from 'immutable'
-
-import {
-  renderToStaticMarkup,
-  renderToString,
-} from 'react-dom/server'
-
-import {
-  createStore,
-  applyMiddleware,
-} from 'redux'
-
-import {
-  Provider,
-} from 'react-redux'
-
-import {
-  createServerRenderContext,
-  ServerRouter,
-} from 'react-router'
-
-import { matchRoutesToLocation } from 'react-router-addons-routes'
-
-import reducers from 'reducers'
-
-import apiMiddleware from 'middlewares/api'
-
-import routes from 'routes'
-
 import { setUser } from 'actions/user'
+import apiMiddleware from 'middlewares/api'
+import reducers from 'reducers'
+import routes from 'routes'
 
 import Application from 'components/Application'
 import Html from 'components/Html'

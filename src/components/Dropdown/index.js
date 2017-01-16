@@ -1,6 +1,4 @@
-import React, {
-  Component,
-} from 'react'
+import React, { Component } from 'react'
 
 import cx from 'classnames'
 

@@ -90,7 +90,7 @@ class DragResize extends Component {
   }
 
   handleDrag = e => {
-    this.measureX(e.screenX)
+    this.measureX(e.clientX)
   }
 
   handleDragEnd = e => {

@@ -34,16 +34,18 @@ export default store => next => async action => {
 
   try {
 
+    const state = getState()
+
     // build request params
 
     const r = {
-      url: `${__API_URL__}${url}`,
+      url: `${__API_URL__}${typeof url === 'function' ? url(state) : url}`,
       method,
     }
 
     if (data) {
       r.data = typeof data === 'function'
-        ? data(getState())
+        ? data(state)
         : data
     }
 

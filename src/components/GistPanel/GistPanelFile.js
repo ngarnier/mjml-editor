@@ -10,6 +10,10 @@ import {
   addTab,
 } from 'actions/editor'
 
+import {
+  renameFile,
+} from 'actions/gists'
+
 import CloseIcon from 'icons/Close'
 import PencilIcon from 'icons/Pencil'
 
@@ -17,6 +21,7 @@ import PencilIcon from 'icons/Pencil'
   isDeleting: isLoading(state, 'REMOVE_FILE_FROM_GIST', props.file.get('filename')),
 }), {
   addTab,
+  renameFile,
 })
 class GistPanelFile extends Component {
 
@@ -53,11 +58,16 @@ class GistPanelFile extends Component {
 
     if (!value) { return }
 
-    const realValue = value.endsWith('.mjml')
+    const {
+      file,
+      renameFile,
+    } = this.props
+
+    const newName = value.endsWith('.mjml')
       ? value
       : `${value}.mjml`
 
-    console.log(`saving ${realValue}`)
+    renameFile(file.get('filename'), newName)
 
     this.stopEditing()
   }

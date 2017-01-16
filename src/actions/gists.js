@@ -54,3 +54,18 @@ export function removeFileFromGist (name) {
     },
   }
 }
+
+// rename the file from oldName to newName
+export function renameFile (oldName, newName) {
+  const payload = { oldName, newName }
+  return {
+    type: 'API:RENAME_FILE',
+    payload: {
+      method: 'put',
+      url: state => `/github/gists/${state.gist.get('id')}/name`,
+      loaderValue: oldName,
+      data: payload,
+      extra: payload,
+    },
+  }
+}

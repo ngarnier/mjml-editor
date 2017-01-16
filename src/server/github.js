@@ -124,4 +124,40 @@ router.delete('/gists', (req, res) => {
 
 })
 
+// rename a file
+router.put('/gists/:gistID/name', (req, res) => {
+
+  const {
+    gistID,
+  } = req.params
+
+  const {
+    oldName,
+    newName,
+  } = req.body
+
+  if (!gistID) {
+    return res.status(400).send({ message: 'No gistID specified' })
+  }
+
+  const github = githubFactory(req)
+
+  github.gists
+    .edit({
+      id: gistID,
+      files: {
+        [oldName]: {
+          filename: newName,
+        },
+      },
+    })
+    .then(() => {
+      res.status(200).end()
+    })
+    .catch(err => {
+      res.status(500).send(err)
+    })
+
+})
+
 export default router

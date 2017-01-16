@@ -3,6 +3,7 @@ import React from 'react'
 const Html = ({ content, state, stats: { styles, main = 'bundle.js' } }) => (
   <html>
     <head>
+      <meta charSet="utf-8" />
       <title>
         MJML Editor
       </title>

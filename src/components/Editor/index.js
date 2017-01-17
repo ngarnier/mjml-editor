@@ -147,27 +147,16 @@ class Editor extends Component {
 
   componentDidUpdate (prevProps) {
     const {
-      socket,
-    } = this.context
-
-    const {
       activeTab,
-      tabs,
     } = this.props
 
     const {
       showEditor,
     } = this.state
 
-    if (activeTab !== prevProps.activeTab) {
-      socket.emit('editor-set-active-tab', { activeTab })
-
-      if (showEditor) {
-        this.changeTab()
-      }
+    if (showEditor && activeTab !== prevProps.activeTab) {
+      this.changeTab()
     }
-
-    this.saveDebounceTabs(tabs)
   }
 
   componentWillUnmount () {
@@ -257,10 +246,6 @@ class Editor extends Component {
   saveDebounceMJML = debounce(mjml => {
     this.props.setCurrentValue(mjml)
   }, 25)
-
-  saveDebounceTabs = debounce(tabs => {
-    this.context.socket.emit('editor-set-tabs', { tabs: tabs.toJS() })
-  }, 250)
 
   destroyEditor () {
     if (this._codeMirror) {

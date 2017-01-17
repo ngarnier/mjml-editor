@@ -8,6 +8,7 @@ import { matchRoutesToLocation } from 'react-router-addons-routes'
 import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 import shortid from 'shortid'
+import path from 'path'
 
 import { setUser } from 'actions/user'
 import apiMiddleware from 'middlewares/api'
@@ -17,18 +18,12 @@ import routes from 'routes'
 import Application from 'components/Application'
 import Html from 'components/Html'
 
-const stats = process.env.NODE_ENV === 'production'
-  ? require(`${process.cwd()}/dist/stats.json`)
+const stats = __PROD__
+  ? require(path.resolve(__dirname, '../../dist/stats.json'))
   : {}
 
 export default async function render (req, res) {
   try {
-
-    // TODO: handle favicon
-    if (req.url === '/favicon.ico') {
-      return res.status(404).end()
-    }
-
     const context = createServerRenderContext()
     const result = context.getResult()
 

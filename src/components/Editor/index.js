@@ -26,9 +26,9 @@ if (__BROWSER__) {
 
   require('codemirror/addon/selection/active-line')
   require('codemirror/addon/edit/closetag')
+  require('codemirror/addon/search/match-highlighter')
 
   require('codemirror/mode/xml/xml')
-  require('codemirror/mode/javascript/javascript')
 }
 
 import './styles.scss'
@@ -277,6 +277,9 @@ class Editor extends Component {
       autoCloseTags: true,
       styleActiveLine: {
         nonEmpty: true,
+      },
+      highlightSelectionMatches: {
+        wordsOnly: true,
       },
     })
 

@@ -4,6 +4,9 @@ import { fromJS } from 'immutable'
 
 import defaultTemplate from 'data/defaultTemplate'
 
+const MAX_SIZE = 70
+const MIN_SIZE = 30
+
 const state = fromJS({
   activeTab: null,
   tabs: [],
@@ -25,7 +28,17 @@ export default handleActions({
   SET_ACTIVE_TAB: (state, { payload: id }) => state.set('activeTab', id),
   SET_TABS: (state, { payload }) => state.set('tabs', payload),
 
-  SET_EDITOR_SIZE: (state, { payload: percent }) => state.set('editorSize', percent),
+  SET_EDITOR_SIZE: (state, { payload: percent }) => {
+    if (percent > MAX_SIZE) {
+      percent = MAX_SIZE
+    }
+
+    if (percent < MIN_SIZE) {
+      percent = MIN_SIZE
+    }
+
+    return state.set('editorSize', percent)
+  },
 
   ADD_TAB: (state, { payload: file }) => {
 

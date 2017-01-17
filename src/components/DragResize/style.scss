@@ -1,6 +1,6 @@
 .DragResize {
   position: relative;
-  z-index: 1;
+  z-index: 4;
   flex-shrink: 0;
   width: 20px;
   margin-left: -10px;
@@ -16,7 +16,7 @@
   .bar {
     opacity: 0;
     position: absolute;
-    top: 0; left: 5px; right: 5px; bottom: 30px;
+    top: 0; left: 5px; right: 5px; bottom: 0;
     background: #3f4550;
     border-left: 1px solid #181a1f;
     border-right: 1px solid #181a1f;

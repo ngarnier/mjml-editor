@@ -4,7 +4,6 @@ import express from 'express'
 import path from 'path'
 import expressSession from 'express-session'
 import passport from 'passport'
-import shortid from 'shortid'
 import { Strategy as StrategyGithub } from 'passport-github2'
 
 import auth from 'server/auth'

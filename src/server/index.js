@@ -4,14 +4,14 @@ import express from 'express'
 import path from 'path'
 import expressSession from 'express-session'
 import passport from 'passport'
-import uuid from 'uuid/v4'
+import shortid from 'shortid'
 import { Strategy as StrategyGithub } from 'passport-github2'
-
-import socketEvents from './socketEvents'
 
 import auth from 'server/auth'
 import github from 'server/github'
 import render from 'server/render'
+
+import socketEvents from 'server/socketEvents'
 
 const app = express()
 const server = require('http').Server(app)
@@ -72,7 +72,7 @@ app.use(auth)
 app.use('/api/github', github)
 app.use(render)
 
-io.on('connection', socket => socketEvents(socket, session))
+io.on('connection', socket => socketEvents(io, socket, session))
 
 server.listen(port, err => {
   if (err) {

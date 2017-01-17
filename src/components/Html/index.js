@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Html = ({ content, state, stats: { styles, main = 'bundle.js' } }) => (
+const Html = ({ content, socketRoom, state, stats: { styles, main = 'bundle.js' } }) => (
   <html>
     <head>
       <meta charSet="utf-8" />
@@ -17,6 +17,11 @@ const Html = ({ content, state, stats: { styles, main = 'bundle.js' } }) => (
       <div
         dangerouslySetInnerHTML={{ __html: content }}
         id="root"
+      />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `window.__SOCKET_ROOM__ = '${socketRoom}'`,
+        }}
       />
       <script
         dangerouslySetInnerHTML={{

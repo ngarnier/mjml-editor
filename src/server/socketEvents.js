@@ -20,14 +20,27 @@ function renderMJML (mjml) {
   }
 }
 
-export default (socket, session) => session(socket.handshake, {}, err => {
+export default (io, socket, session) => session(socket.handshake, {}, err => {
   if (err) { return }
 
-  if (!socket.handshake.session.editor) {
+  const {
+    editor,
+  } = socket.handshake.session
+
+  if (!editor) {
     socket.handshake.session.editor = {}
   }
 
-  socket.on('event', data => socket.emit(data))
+  let currentRoom = socket.id
+
+  socket.on('JOIN_ROOM', ({ socketRoom }) => {
+    socket.leave(currentRoom)
+    socket.join(socketRoom)
+
+    currentRoom = socketRoom
+  })
+
+  socket.on('event', data => io.to(currentRoom).emit(data))
 
   socket.on('logout', () => {
     delete socket.handshake.session.passport
@@ -39,7 +52,7 @@ export default (socket, session) => session(socket.handshake, {}, err => {
   socket.on('mjml-to-html', ({ mjml }) => {
     const preview = renderMJML(mjml)
 
-    socket.emit('preview-html', {
+    io.to(currentRoom).emit('preview-html', {
       preview,
     })
   })
@@ -57,7 +70,7 @@ export default (socket, session) => session(socket.handshake, {}, err => {
   })
 
   socket.on('LOAD_GIST_SUCCESS', ({ gistID }) => {
-    socket.emit('URL_CHANGE', {
+    io.to(currentRoom).emit('URL_CHANGE', {
       type: 'replace',
       url: `/gists/${gistID}`,
     })

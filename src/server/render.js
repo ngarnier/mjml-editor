@@ -7,6 +7,7 @@ import { fromJS } from 'immutable'
 import { matchRoutesToLocation } from 'react-router-addons-routes'
 import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
+import shortid from 'shortid'
 
 import { setUser } from 'actions/user'
 import apiMiddleware from 'middlewares/api'
@@ -75,6 +76,8 @@ export default async function render (req, res) {
       params,
     }
 
+    const socketRoom = params.socketRoom || shortid.generate()
+
     const dataPromises = matchedRoutes
       .filter(route => route.component.load)
       .map(route => route.component.load(dataParams))
@@ -95,6 +98,7 @@ export default async function render (req, res) {
     const markup = renderToStaticMarkup(
       <Html
         content={content}
+        socketRoom={socketRoom}
         state={store.getState()}
         stats={stats}
       />

@@ -1,0 +1,23 @@
+{
+  "apps": [{
+
+    "name"  : "mjml-editor",
+    "script": "index.js",
+
+    "env_production": {
+      NODE_ENV: "production"
+    }
+
+  }],
+
+  "deploy": {
+    "production": {
+      "user"       : "pm2",
+      "host"       : "sigsev.io",
+      "ref"        : "origin/master",
+      "repo"       : "git@github.com:lohek/mjml-editor.git",
+      "path"       : "/var/www/mjml-editor",
+      "post-deploy": "yarn && NODE_ENV=production yarn run build && pm2 startOrRestart ecosystem.json --env production"
+    }
+  }
+}

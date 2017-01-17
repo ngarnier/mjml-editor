@@ -41,8 +41,7 @@
     "ress": "^1.1.2",
     "shortid": "^2.2.6",
     "socket.io": "^1.7.2",
-    "socket.io-client": "^1.7.2",
-    "uuid": "^3.0.1"
+    "socket.io-client": "^1.7.2"
   },
   "devDependencies": {
     "autoprefixer": "^6.6.0",

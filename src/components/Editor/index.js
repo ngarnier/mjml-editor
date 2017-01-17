@@ -210,7 +210,7 @@ class Editor extends Component {
       showPreview: false,
     })
 
-    window.open('/preview', '_blank', 'toolbar=0,menubar=0')
+    window.open(`/preview/${window.__SOCKET_ROOM__}`, '_blank', 'toolbar=0,menubar=0')
   }
 
   saveHistory () {

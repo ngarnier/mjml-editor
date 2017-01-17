@@ -5,7 +5,7 @@ export function loadGist (gistID) {
       url: `/github/gists/${gistID}`,
       socketOnSuccess: {
         gistID,
-      }
+      },
     },
   }
 }

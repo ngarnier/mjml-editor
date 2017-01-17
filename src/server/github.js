@@ -1,29 +1,49 @@
 import express from 'express'
 import GitHubApi from 'github'
+
 import values from 'lodash/values'
 
 const router = express.Router()
 
 function githubFactory (req) {
   const github = new GitHubApi()
+
   if (req.isAuthenticated()) {
     github.authenticate({
       type: 'token',
       token: req.user.accessToken,
     })
   }
+
   return github
 }
 
-export const ensureAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next()
+function getRateLimit (data) {
+  const {
+    meta,
+  } = data
+
+  if (meta) {
+    return {
+      rateLimit: {
+        limit: meta['x-ratelimit-limit'],
+        remaining: meta['x-ratelimit-remaining'],
+        reset: meta['x-ratelimit-reset'],
+      },
+    }
   }
 
-  res
-    .status(403)
-    .end('Not authorized')
+  return {}
 }
+
+router.get('/rate_limit', (req, res) => {
+  const github = githubFactory(req)
+
+  github.misc.getRateLimit({}, (err, { rate }) => {
+    if (err) { return res.status(500).send(err) }
+    res.json(rate)
+  })
+})
 
 router.get('/gists/:id', (req, res) => {
   const {
@@ -87,6 +107,7 @@ router.post('/gists', (req, res) => {
     .then(data => {
       res.json({
         gistID: data.id,
+        ...getRateLimit(data),
       })
     })
     .catch(err => {

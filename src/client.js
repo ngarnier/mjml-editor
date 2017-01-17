@@ -20,11 +20,14 @@ const initialState = window.__INITIAL_STATE__
 
 // immutable reducers
 initialState.editor = fromJS(initialState.editor)
+initialState.gist = fromJS(initialState.gist)
 initialState.loaders = fromJS(initialState.loaders)
 initialState.notifications = fromJS(initialState.notifications)
-initialState.gist = fromJS(initialState.gist)
+initialState.ratelimit = fromJS(initialState.ratelimit)
 
-const devTools = window.devToolsExtension ? window.devToolsExtension() : f => f
+const devTools = window.devToolsExtension
+  ? window.devToolsExtension()
+  : f => f
 
 const middlewares = compose(
   applyMiddleware(thunk, apiMiddleware),

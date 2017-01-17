@@ -106,8 +106,6 @@ export default async function render (req, res) {
 
     res.end(markup)
   } catch (err) {
-    res
-      .status(500)
-      .send(err.stack)
+    res.status(500).send(err.stack)
   }
 }

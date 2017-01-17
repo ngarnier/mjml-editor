@@ -17,6 +17,7 @@
     "classnames": "^2.2.5",
     "codemirror": "^5.22.2",
     "compression": "^1.6.2",
+    "date-fns": "^1.26.0",
     "dotenv": "^4.0.0",
     "express": "^4.14.0",
     "express-session": "^1.14.2",

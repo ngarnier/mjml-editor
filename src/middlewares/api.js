@@ -2,8 +2,8 @@ import axios from 'axios'
 
 import socket from 'helpers/getClientSocket'
 
-import { startLoader, stopLoader } from 'actions/loaders'
 import { addNotif } from 'actions/notifications'
+import { startLoader, stopLoader } from 'actions/loaders'
 
 export default store => next => async action => {
 
@@ -53,6 +53,18 @@ export default store => next => async action => {
 
     // execute request
     const res = await axios.request(r)
+
+    // set ratelimit if available
+    const {
+      rateLimit,
+    } = res.data
+
+    if (rateLimit) {
+      dispatch({
+        type: 'SET_RATE_LIMIT',
+        payload: rateLimit,
+      })
+    }
 
     // ability to pass data to reducers from actions
     const successPayload = extra

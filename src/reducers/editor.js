@@ -7,7 +7,7 @@ import defaultTemplate from 'data/defaultTemplate'
 const MAX_SIZE = 70
 const MIN_SIZE = 30
 
-const state = fromJS({
+const initialState = fromJS({
   activeTab: null,
   tabs: [],
 
@@ -123,7 +123,7 @@ export default handleActions({
       .set('activeTab', isActive ? null : activeTab)
   },
 
-}, state)
+}, initialState)
 
 export function getActiveTab (state) {
   const tabs = state.editor.get('tabs')

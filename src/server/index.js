@@ -1,10 +1,11 @@
+import { Strategy as StrategyGithub } from 'passport-github2'
 import bodyParser from 'body-parser'
 import compression from 'compression'
 import express from 'express'
-import path from 'path'
 import expressSession from 'express-session'
+import favicon from 'serve-favicon'
 import passport from 'passport'
-import { Strategy as StrategyGithub } from 'passport-github2'
+import path from 'path'
 
 import auth from 'server/auth'
 import github from 'server/github'
@@ -18,7 +19,7 @@ const io = require('socket.io')(server)
 
 const port = process.env.PORT || 3333
 
-if (process.env.NODE_ENV === 'development') {
+if (__DEV__) {
   require('server/webpack')(app)
 }
 
@@ -41,6 +42,8 @@ passport.use(new StrategyGithub({
     profile,
   })
 }))
+
+app.use(favicon(path.resolve(__dirname, '../assets/favicon.ico')))
 
 if (__PROD__) {
   app.use(compression())

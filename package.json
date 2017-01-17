@@ -1,11 +1,12 @@
 {
+  "name": "mjml-editor",
+  "version": "0.0.1",
   "engines": {
-    "node": "6.9.x"
+    "node": "6.9.x || 7.x"
   },
   "scripts": {
     "build": "webpack --config webpack/build.config.babel.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "heroku-postbuild": "NODE_ENV=production npm run build",
     "start": "cross-env NODE_ENV=production node index.js",
     "lint": "eslint src",
     "pm2:setup": "pm2 deploy ecosystem.json production setup",
@@ -39,6 +40,7 @@
     "redux-actions": "^1.2.0",
     "redux-thunk": "^2.1.0",
     "ress": "^1.1.2",
+    "serve-favicon": "^2.3.2",
     "shortid": "^2.2.6",
     "socket.io": "^1.7.2",
     "socket.io-client": "^1.7.2"
@@ -77,5 +79,10 @@
     "webpack-hot-middleware": "^2.15.0",
     "webpack-merge": "^2.4.0",
     "webpack-stats-plugin": "^0.1.4"
-  }
+  },
+  "license": "MIT",
+  "author": "Loëck Vézien @lohek",
+  "contributors": [
+    "Mériadec Pillet @meriadec"
+  ]
 }

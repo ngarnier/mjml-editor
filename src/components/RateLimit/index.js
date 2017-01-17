@@ -20,10 +20,11 @@ class RateLimit extends Component {
     const remaining = 100 - limit
 
     return (
-      <div className={cx('RateLimit', {
-        'RateLimit--full': remaining === 100,
-        'RateLimit--empty': limit === 100,
-      })}>
+      <div
+        className={cx('RateLimit', {
+          'RateLimit--full': remaining === 100,
+          'RateLimit--empty': limit === 100,
+        })}>
         <div className="RateLimit-Reset">
           Reset at {dateFns.format(new Date(ratelimit.get('reset') * 1000), 'HH:mm:ss')}
         </div>
@@ -31,7 +32,7 @@ class RateLimit extends Component {
           <div
             className="RateLimit-Limit"
             style={{
-              width: `${limit}%`
+              width: `${limit}%`,
             }}
           >
             {ratelimit.get('limit') - ratelimit.get('remaining')}
@@ -39,7 +40,7 @@ class RateLimit extends Component {
           <div
             className="RateLimit-Remaining"
             style={{
-              width: `${remaining}%`
+              width: `${remaining}%`,
             }}
           >
             {ratelimit.get('remaining')}

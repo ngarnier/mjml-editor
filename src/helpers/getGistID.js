@@ -5,7 +5,7 @@ export default function getGistID (gistValue) {
   const matches = gistValue.match(REGEXP_ID)
 
   if (matches) {
-    const [ , , gistID ] = matches
+    const [, , gistID] = matches
 
     if (gistID) {
       return gistID

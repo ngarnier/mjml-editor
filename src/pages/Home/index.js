@@ -38,10 +38,10 @@ class Home extends Component {
 
     socket.on('URL_CHANGE', ({ type, url }) => {
       switch (type) {
-        case 'replace':
-          history.replaceState({}, '', url)
+      case 'replace':
+        history.replaceState({}, '', url)
 
-          break
+        break
       }
     })
   }

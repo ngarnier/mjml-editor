@@ -29,7 +29,7 @@ function getRateLimit (data) {
         limit: meta['x-ratelimit-limit'],
         remaining: meta['x-ratelimit-remaining'],
         reset: meta['x-ratelimit-reset'],
-      }
+      },
     }
   }
 

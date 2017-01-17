@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -36,8 +36,7 @@ class Menu extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.isLoadingGist === true &&
-        nextProps.isLoadingGist === false) {
+    if (this.props.isLoadingGist === true && nextProps.isLoadingGist === false) {
       this.setState({
         gistValue: '',
         isModalOpenOpened: false,
@@ -56,7 +55,7 @@ class Menu extends Component {
   })
 
   toggleModalOpen = () => this.setState(prev => ({
-    isModalOpenOpened: !prev.isModalOpenOpened
+    isModalOpenOpened: !prev.isModalOpenOpened,
   }))
 
   closeModalOpen = () => this.setState({
@@ -64,10 +63,6 @@ class Menu extends Component {
   })
 
   openGist = e => {
-    const {
-      socket,
-    } = this.context
-
     const {
       loadGist,
     } = this.props

@@ -57,18 +57,6 @@ export default (io, socket, session) => session(socket.handshake, {}, err => {
     })
   })
 
-  socket.on('editor-set-active-tab', ({ activeTab }) => {
-    socket.handshake.session.editor.activeTab = activeTab
-
-    socket.handshake.session.save()
-  })
-
-  socket.on('editor-set-tabs', ({ tabs }) => {
-    socket.handshake.session.editor.tabs = tabs
-
-    socket.handshake.session.save()
-  })
-
   socket.on('LOAD_GIST_SUCCESS', ({ gistID }) => {
     io.to(currentRoom).emit('URL_CHANGE', {
       type: 'replace',

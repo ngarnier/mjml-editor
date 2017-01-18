@@ -36,7 +36,8 @@ class Menu extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.isLoadingGist === true && nextProps.isLoadingGist === false) {
+    if (this.props.isLoadingGist === true &&
+        nextProps.isLoadingGist === false) {
       this.setState({
         gistValue: '',
         isModalOpenOpened: false,

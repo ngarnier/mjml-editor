@@ -18,6 +18,8 @@
     "classnames": "^2.2.5",
     "codemirror": "^5.22.2",
     "compression": "^1.6.2",
+    "connect-redis": "^3.2.0",
+    "cookie-parser": "^1.4.3",
     "date-fns": "^1.26.0",
     "dotenv": "^4.0.0",
     "express": "^4.14.0",

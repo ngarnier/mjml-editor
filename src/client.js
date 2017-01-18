@@ -24,6 +24,7 @@ initialState.gist = fromJS(initialState.gist)
 initialState.loaders = fromJS(initialState.loaders)
 initialState.notifications = fromJS(initialState.notifications)
 initialState.ratelimit = fromJS(initialState.ratelimit)
+initialState.user = fromJS(initialState.user)
 
 const devTools = window.devToolsExtension
   ? window.devToolsExtension()

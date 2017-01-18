@@ -16,8 +16,6 @@ export default store => next => async action => {
   // getState: to eventually pass state to handlers
   const { dispatch, getState } = store
 
-  const state = getState()
-
   // extract prefix from action type
   // e.g 'API:FETCH_GIST => FETCH_GIST'
   const prefix = action.type.split(':')[1]

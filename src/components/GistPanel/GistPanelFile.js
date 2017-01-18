@@ -80,14 +80,14 @@ class GistPanelFile extends Component {
 
   handleKeyDown = e => {
     switch (e.which) {
-    case 13:
-      this.saveEditing()
-      break
-    case 27:
-      this.stopEditing()
-      break
-    default:
-      break
+      case 13:
+        this.saveEditing()
+        break
+      case 27:
+        this.stopEditing()
+        break
+      default:
+        break
     }
   }
 

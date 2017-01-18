@@ -6,10 +6,6 @@
   border-right: 1px solid #181a1f;
 }
 
-* {
-  min-width: 0;
-}
-
 .GistPanelFile {
   height: 30px;
   min-width: 0;
@@ -34,11 +30,8 @@
   display: flex;
   align-items: center;
   color: #aaa;
-  overflow: hidden;
-  white-space: pre;
-  text-overflow: ellipsis;
   flex-grow: 1;
-  cursor: default;
+  cursor: pointer;
   padding: 0 5px;
   user-select: none;
   min-width: 0;

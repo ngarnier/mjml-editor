@@ -138,7 +138,9 @@ class GistPanelFile extends Component {
             className="GistPanelFile--name"
             onClick={() => addTab(file)}
           >
-            {file.get('filename')}
+            <span className="ellipsis">
+              {file.get('filename')}
+            </span>
           </div>,
           <div
             key="actions"

@@ -19,6 +19,7 @@ import PencilIcon from 'icons/Pencil'
 
 @connect((state, props) => ({
   isDeleting: isLoading(state, 'REMOVE_FILE_FROM_GIST', props.file.get('filename')),
+  isRenaming: isLoading(state, 'RENAME_FILE', props.file.get('filename')),
 }), {
   addTab,
   renameFile,
@@ -108,6 +109,7 @@ class GistPanelFile extends Component {
       addTab,
       activeTabName,
       isDeleting,
+      isRenaming,
     } = this.props
 
     return (
@@ -117,11 +119,12 @@ class GistPanelFile extends Component {
         })}
       >
         {isDeleting ? (
-          <div
-            key="name"
-            className="GistPanelFile--name isDeleting"
-          >
+          <div className="GistPanelFile--name loading">
             {'deleting...'}
+          </div>
+        ) : isRenaming ? (
+          <div className="GistPanelFile--name loading">
+            {'renaming...'}
           </div>
         ) : isEditing ? (
           <input

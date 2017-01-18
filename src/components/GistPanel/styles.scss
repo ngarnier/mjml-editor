@@ -36,8 +36,10 @@
   user-select: none;
   min-width: 0;
 
-  &.isDeleting {
+  &.loading {
     font-style: italic;
+    opacity: 0.6;
+    justify-content: center;
   }
 }
 

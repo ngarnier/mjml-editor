@@ -1,43 +1,43 @@
-import React, {
-  Component,
-} from 'react'
+import React, { Component, PropTypes } from 'react'
 
-import {
-  connect,
-} from 'react-redux'
-
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { Motion, spring } from 'react-motion'
 import cx from 'classnames'
-import {
-  Motion,
-  spring,
-} from 'react-motion'
 
-import {
-  Dropdown,
-  DropdownItem,
-} from 'components/Dropdown'
+import { logout } from 'actions/user'
+import { getRateLimit } from 'actions/ratelimit'
 
-import socket from 'helpers/getClientSocket'
+import { Dropdown, DropdownItem } from 'components/Dropdown'
 
 import IconGithub from 'icons/Github'
 
 import './styles.scss'
 
 @connect(
-  ({ user }) => ({ user }),
+  ({ user }) => ({
+    profile: user.get('profile'),
+  }),
   dispatch => ({
-    logout: () => dispatch({ type: 'LOGOUT' }),
+    ...bindActionCreators({
+      logout,
+      getRateLimit,
+    }, dispatch),
   })
 )
 class Auth extends Component {
+
+  static contextTypes = {
+    socket: PropTypes.object,
+  }
 
   state = {
     showDropdown: false,
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.user === null &&
-        this.props.user !== null) {
+    if (!nextProps.profile &&
+        this.props.profile) {
       this.setState({
         showDropdown: false,
       })
@@ -53,13 +53,23 @@ class Auth extends Component {
   })
 
   handleClickLogout = () => {
+    const {
+      socket,
+    } = this.context
+    const {
+      getRateLimit,
+      logout,
+    } = this.props
+
+    logout()
+    getRateLimit()
+
     socket.emit('logout')
-    this.props.logout()
   }
 
   render () {
     const {
-      user,
+      profile,
     } = this.props
     const {
       showDropdown,
@@ -68,9 +78,9 @@ class Auth extends Component {
     return (
       <div
         className={cx('Auth', {
-          'Auth--signed': user !== null,
+          'Auth--signed': profile,
         })}>
-        { user === null ?
+        { !profile ?
           <div className="Auth-Signin">
             <a href="/login">
               Signin with Github <IconGithub />
@@ -80,7 +90,7 @@ class Auth extends Component {
             className="Auth-Profile"
             onClick={this.handleToggleDropdown}
           >
-            Signed in as&nbsp;<strong>{user.login}</strong> <img src={user.avatar_url} />
+            Signed in as&nbsp;<strong>{profile.get('login')}</strong> <img src={profile.get('avatar_url')} />
           </div> }
         <Motion
           style={{

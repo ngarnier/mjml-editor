@@ -1,38 +1,58 @@
 import express from 'express'
 import GitHubApi from 'github'
+
 import values from 'lodash/values'
 
 const router = express.Router()
 
-function githubFactory (req) {
+function githubFactory (req, res, next) {
   const github = new GitHubApi()
-  if (req.isAuthenticated()) {
+
+  const accessToken = req.headers['x-access-token']
+
+  if (accessToken) {
     github.authenticate({
       type: 'token',
-      token: req.user.accessToken,
+      token: accessToken,
     })
   }
-  return github
+
+  req.githubApi = github
+
+  next()
 }
 
-export const ensureAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next()
+function getRateLimit (data) {
+  const {
+    meta,
+  } = data
+
+  if (meta) {
+    return {
+      rateLimit: {
+        limit: meta['x-ratelimit-limit'],
+        remaining: meta['x-ratelimit-remaining'],
+        reset: meta['x-ratelimit-reset'],
+      },
+    }
   }
 
-  res
-    .status(403)
-    .end('Not authorized')
+  return {}
 }
 
-router.get('/gists/:id', (req, res) => {
+router.get('/rate_limit', githubFactory, (req, res) => {
+  req.githubApi.misc.getRateLimit({}, (err, { rate }) => {
+    if (err) { return res.status(500).send(err) }
+    res.json(rate)
+  })
+})
+
+router.get('/gists/:id', githubFactory, (req, res) => {
   const {
     id,
   } = req.params
 
-  const github = githubFactory(req)
-
-  github.gists.get({
+  req.githubApi.gists.get({
     id,
   }, (err, gist) => {
     if (err) { return res.status(500).send(err) }
@@ -44,14 +64,12 @@ router.get('/gists/:id', (req, res) => {
   })
 })
 
-router.post('/gists', (req, res) => {
+router.post('/gists', githubFactory, (req, res) => {
 
   const {
     gistID,
     tab,
   } = req.body
-
-  const github = githubFactory(req)
 
   let promise
 
@@ -66,7 +84,7 @@ router.post('/gists', (req, res) => {
       },
     }
 
-    promise = github.gists.edit(payload)
+    promise = req.githubApi.gists.edit(payload)
 
   } else {
 
@@ -79,7 +97,7 @@ router.post('/gists', (req, res) => {
       public: true,
     }
 
-    promise = github.gists.create(payload)
+    promise = req.githubApi.gists.create(payload)
 
   }
 
@@ -87,6 +105,7 @@ router.post('/gists', (req, res) => {
     .then(data => {
       res.json({
         gistID: data.id,
+        ...getRateLimit(data),
       })
     })
     .catch(err => {
@@ -95,7 +114,7 @@ router.post('/gists', (req, res) => {
 
 })
 
-router.delete('/gists', (req, res) => {
+router.delete('/gists', githubFactory, (req, res) => {
 
   const {
     gistID,
@@ -106,9 +125,7 @@ router.delete('/gists', (req, res) => {
     return res.status(400).send({ message: 'No gistID specified' })
   }
 
-  const github = githubFactory(req)
-
-  github.gists
+  req.githubApi.gists
     .edit({
       id: gistID,
       files: {

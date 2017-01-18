@@ -1,7 +1,9 @@
 import axios from 'axios'
 
-import { startLoader, stopLoader } from 'actions/loaders'
+import socket from 'helpers/getClientSocket'
+
 import { addNotif } from 'actions/notifications'
+import { startLoader, stopLoader } from 'actions/loaders'
 
 export default store => next => async action => {
 
@@ -14,6 +16,8 @@ export default store => next => async action => {
   // getState: to eventually pass state to handlers
   const { dispatch, getState } = store
 
+  const state = getState()
+
   // extract prefix from action type
   // e.g 'API:FETCH_GIST => FETCH_GIST'
   const prefix = action.type.split(':')[1]
@@ -21,12 +25,14 @@ export default store => next => async action => {
   // extract data from action payload
   // to build request
   const {
-    url,
-    method = 'get',
     loaderValue = true,
-    query,
     data,
     extra,
+    headers = {},
+    method = 'get',
+    query,
+    socketOnSuccess,
+    url,
   } = action.payload
 
   // start loader which name is prefix
@@ -38,9 +44,17 @@ export default store => next => async action => {
 
     // build request params
 
+    const accessToken = state.user.get('accessToken')
+
+    if (accessToken) {
+      headers['x-access-token'] = accessToken
+    }
+
+    // build request params
     const r = {
       url: `${__API_URL__}${typeof url === 'function' ? url(state) : url}`,
       method,
+      headers,
     }
 
     if (data) {
@@ -54,14 +68,38 @@ export default store => next => async action => {
     // execute request
     const res = await axios.request(r)
 
+    // set ratelimit if available
+    const {
+      rateLimit,
+    } = res.data
+
+    if (rateLimit) {
+      dispatch({
+        type: 'SET_RATE_LIMIT',
+        payload: rateLimit,
+      })
+    }
+
     // ability to pass data to reducers from actions
     const successPayload = extra
       ? { extra, data: res.data }
       : res.data
 
+    const typeSuccess = `${prefix}_SUCCESS`
+
+    if (__BROWSER__ && socketOnSuccess) {
+      const dataSocket = typeof socketOnSuccess === 'function'
+        ? socketOnSuccess(successPayload)
+        : typeof socketOnSuccess === 'boolean'
+          ? null
+          : socketOnSuccess
+
+      socket.emit(typeSuccess, dataSocket)
+    }
+
     // dispatch request result as success
     dispatch({
-      type: `${prefix}_SUCCESS`,
+      type: typeSuccess,
       payload: successPayload,
     })
 

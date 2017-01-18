@@ -1,6 +1,4 @@
-import React, {
-  Component,
-} from 'react'
+import React, { Component } from 'react'
 
 import map from 'lodash/map'
 

@@ -1,7 +1,5 @@
 import filesize from 'filesize'
-import {
-  mjml2html,
-} from 'mjml'
+import { mjml2html } from 'mjml'
 
 function renderMJML (mjml) {
   let html = ''
@@ -22,48 +20,46 @@ function renderMJML (mjml) {
   }
 }
 
-export default (socket, session) => {
-  session(socket.handshake, {}, err => {
-    if (err) { return }
+export default (io, socket, session) => session(socket.handshake, {}, err => {
+  if (err) { return }
 
-    const {
-      socketRoom,
-    } = socket.handshake.session
+  const {
+    editor,
+  } = socket.handshake.session
 
-    if (socketRoom) {
-      socket.join(socketRoom)
+  if (!editor) {
+    socket.handshake.session.editor = {}
+  }
 
-      socket.on('event', data => {
-        socket.broadcast.to(socketRoom).emit(data)
-      })
+  let currentRoom = socket.id
 
-      socket.on('logout', () => {
-        delete socket.handshake.session.passport
-        delete socket.handshake.session.user
+  socket.on('JOIN_ROOM', ({ socketRoom }) => {
+    socket.leave(currentRoom)
+    socket.join(socketRoom)
 
-        socket.handshake.session.save()
-      })
-
-      socket.on('mjml-to-html', ({ mjml }) => {
-        const preview = renderMJML(mjml)
-
-        socket.broadcast.to(socketRoom).emit('preview-html', {
-          preview,
-        })
-      })
-
-      socket.on('editor-set-active-tab', ({ activeTab }) => {
-        socket.handshake.session.editor.activeTab = activeTab
-
-        socket.handshake.session.save()
-      })
-
-      socket.on('editor-set-tabs', ({ tabs }) => {
-        socket.handshake.session.editor.tabs = tabs
-
-        socket.handshake.session.save()
-      })
-
-    }
+    currentRoom = socketRoom
   })
-}
+
+  socket.on('event', data => io.to(currentRoom).emit(data))
+
+  socket.on('logout', () => {
+    delete socket.handshake.session.passport
+
+    socket.handshake.session.save()
+  })
+
+  socket.on('mjml-to-html', ({ mjml }) => {
+    const preview = renderMJML(mjml)
+
+    io.to(currentRoom).emit('preview-html', {
+      preview,
+    })
+  })
+
+  socket.on('LOAD_GIST_SUCCESS', ({ gistID }) => {
+    io.to(currentRoom).emit('URL_CHANGE', {
+      type: 'replace',
+      url: `/gists/${gistID}`,
+    })
+  })
+})

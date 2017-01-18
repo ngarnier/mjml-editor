@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
+
 import { connect } from 'react-redux'
+
+import noop from 'lodash/noop'
 
 import {
   getRect,
@@ -20,12 +23,17 @@ const RIGHT_CLASS = '.Editor-Right'
 const STEP = 10
 
 @connect(null, dispatch => ({
-  updateEditorSize: (percent) => dispatch({
+  updateEditorSize: percent => dispatch({
     type: 'SET_EDITOR_SIZE',
     payload: percent,
   }),
 }))
 class DragResize extends Component {
+
+  static defaultProps = {
+    onDragStart: noop,
+    onDragEnd: noop,
+  }
 
   state = {
     isDragging: false,
@@ -82,14 +90,18 @@ class DragResize extends Component {
   })
 
   handleDragStart = e => {
+    e.dataTransfer.effectAllowed = 'none'
     e.dataTransfer.setDragImage(emptyImage, 0, 0)
+
     this.setState({
       isDragging: true,
     })
+
+    this.props.onDragStart()
   }
 
   handleDrag = e => {
-    this.measureX(e.screenX)
+    this.measureX(e.clientX)
   }
 
   handleDragEnd = e => {
@@ -101,6 +113,8 @@ class DragResize extends Component {
     this.setState({
       isDragging: false,
     })
+
+    this.props.onDragEnd()
 
   }
 

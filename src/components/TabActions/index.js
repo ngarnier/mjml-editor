@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
+
 import { connect } from 'react-redux'
 
 import { getActiveTab } from 'reducers/editor'
 import { isLoading } from 'reducers/loaders'
 
-import {
-  saveCurrentTabToGist,
-  removeFileFromGist,
-} from 'actions/gists'
+import { saveCurrentTabToGist, removeFileFromGist } from 'actions/gists'
 
 import Button from 'components/Button'
 

@@ -1,0 +1,58 @@
+.RateLimit {
+  color: #d7dae0;
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.RateLimit--full {
+  .RateLimit-Limit {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+
+  .RateLimit-Remaining {
+    display: none;
+  }
+}
+
+.RateLimit--empty {
+  .RateLimit-Limit {
+    display: none;
+  }
+
+  .RateLimit-Remaining {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+}
+
+.RateLimit-Reset {
+  margin-right: 10px;
+}
+
+.RateLimit-Progress {
+  font-size: 8px;
+  display: flex;
+  height: 15px;
+  line-height: 15px;
+  width: 100px;
+  text-align: center;
+
+  .RateLimit-Remaining,
+  .RateLimit-Limit {
+    min-width: 15%;
+  }
+}
+
+.RateLimit-Remaining {
+  background-color: #517347;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.RateLimit-Limit {
+  background-color: #b36161;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}

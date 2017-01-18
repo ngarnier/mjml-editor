@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+
 import thunk from 'redux-thunk'
 import { fromJS } from 'immutable'
 
@@ -9,13 +10,7 @@ import {
   compose,
 } from 'redux'
 
-import {
-  Provider,
-} from 'react-redux'
-
-import {
-  BrowserRouter,
-} from 'react-router'
+import Wrapper from 'containers/Wrapper'
 
 import reducers from 'reducers'
 
@@ -25,11 +20,15 @@ const initialState = window.__INITIAL_STATE__
 
 // immutable reducers
 initialState.editor = fromJS(initialState.editor)
+initialState.gist = fromJS(initialState.gist)
 initialState.loaders = fromJS(initialState.loaders)
 initialState.notifications = fromJS(initialState.notifications)
-initialState.gist = fromJS(initialState.gist)
+initialState.ratelimit = fromJS(initialState.ratelimit)
+initialState.user = fromJS(initialState.user)
 
-const devTools = window.devToolsExtension ? window.devToolsExtension() : f => f
+const devTools = window.devToolsExtension
+  ? window.devToolsExtension()
+  : f => f
 
 const middlewares = compose(
   applyMiddleware(thunk, apiMiddleware),
@@ -42,11 +41,9 @@ const roolEl = document.getElementById('root')
 
 function render (Component) {
   ReactDOM.render(
-    <Provider store={store}>
-      <BrowserRouter>
-        <Component />
-      </BrowserRouter>
-    </Provider>,
+    <Wrapper store={store}>
+      <Component />
+    </Wrapper>,
     roolEl
   )
 }

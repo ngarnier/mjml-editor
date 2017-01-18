@@ -14,7 +14,7 @@ const routes = [
     component: Home,
   },
   {
-    pattern: '/preview',
+    pattern: '/preview/:socketRoom',
     name: 'preview',
     component: Preview,
   },

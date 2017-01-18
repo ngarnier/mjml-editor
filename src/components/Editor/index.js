@@ -1,34 +1,20 @@
-import React, {
-  Component,
-} from 'react'
-
-import {
-  bindActionCreators,
-} from 'redux'
+import React, { Component, PropTypes } from 'react'
 
 import debounce from 'lodash/debounce'
 
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import cx from 'classnames'
 
-import {
-  connect,
-} from 'react-redux'
+import { addTab, removeTab } from 'actions/editor'
 
-import {
-  Tabs,
-  Tab,
-} from 'components/Tabs'
-
-import socket from 'helpers/getClientSocket'
-
-import { addTab } from 'actions/editor'
-
+import { Tabs, Tab } from 'components/Tabs'
+import DragResize from 'components/DragResize'
 import Empty from 'components/Empty'
 import Footer from 'components/Footer'
+import GistPanel from 'components/GistPanel'
 import Iframe from 'components/Iframe'
 import TabActions from 'components/TabActions'
-import GistPanel from 'components/GistPanel'
-import DragResize from 'components/DragResize'
 
 import IconAdd from 'icons/Add'
 import IconProgramming from 'icons/Programming'
@@ -40,9 +26,9 @@ if (__BROWSER__) {
 
   require('codemirror/addon/selection/active-line')
   require('codemirror/addon/edit/closetag')
+  require('codemirror/addon/search/match-highlighter')
 
   require('codemirror/mode/xml/xml')
-  require('codemirror/mode/javascript/javascript')
 }
 
 import './styles.scss'
@@ -54,9 +40,6 @@ import './styles.scss'
     tabs: editor.get('tabs'),
   }),
   dispatch => ({
-
-    // remove a tab
-    removeTab: id => dispatch({ type: 'REMOVE_TAB', payload: id }),
 
     // set this id as current active tab
     setActiveTab: id => dispatch({ type: 'SET_ACTIVE_TAB', payload: id }),
@@ -70,11 +53,18 @@ import './styles.scss'
       // add a tab
       addTab,
 
+      // remove a tab
+      removeTab,
+
     }, dispatch),
 
   })
 )
 class Editor extends Component {
+
+  static contextTypes = {
+    socket: PropTypes.object,
+  }
 
   _codeMirror = null // eslint-disable-line react/sort-comp
 
@@ -82,11 +72,16 @@ class Editor extends Component {
 
   state = {
     cursor: null,
+    onResize: false,
     showEditor: this.props.tabs.size > 0,
     showPreview: true,
   }
 
   componentDidMount () {
+    const {
+      socket,
+    } = this.context
+
     const {
       showEditor,
     } = this.state
@@ -153,24 +148,22 @@ class Editor extends Component {
   componentDidUpdate (prevProps) {
     const {
       activeTab,
-      tabs,
     } = this.props
 
     const {
       showEditor,
     } = this.state
 
-    if (activeTab !== prevProps.activeTab) {
-      socket.emit('editor-set-active-tab', { activeTab })
-      if (showEditor) {
-        this.changeTab()
-      }
+    if (showEditor && activeTab !== prevProps.activeTab) {
+      this.changeTab()
     }
-
-    this.saveDebounceTabs(tabs)
   }
 
   componentWillUnmount () {
+    const {
+      socket,
+    } = this.context
+
     socket.removeAllListeners('send-html-to-preview')
     socket.removeAllListeners('minimize-preview')
   }
@@ -206,7 +199,7 @@ class Editor extends Component {
       showPreview: false,
     })
 
-    window.open('/preview', '_blank', 'toolbar=0,menubar=0')
+    window.open(`/preview/${window.__SOCKET_ROOM__}`, '_blank', 'toolbar=0,menubar=0')
   }
 
   saveHistory () {
@@ -254,10 +247,6 @@ class Editor extends Component {
     this.props.setCurrentValue(mjml)
   }, 25)
 
-  saveDebounceTabs = debounce(tabs => {
-    socket.emit('editor-set-tabs', { tabs: tabs.toJS() })
-  }, 250)
-
   destroyEditor () {
     if (this._codeMirror) {
       this._codeMirror.toTextArea()
@@ -289,6 +278,9 @@ class Editor extends Component {
       styleActiveLine: {
         nonEmpty: true,
       },
+      highlightSelectionMatches: {
+        wordsOnly: true,
+      },
     })
 
     this._codeMirror.on('change', this.handleChange)
@@ -305,7 +297,7 @@ class Editor extends Component {
   }, 250)
 
   renderHTML = mjml => {
-    socket.emit('mjml-to-html', {
+    this.context.socket.emit('mjml-to-html', {
       mjml,
     })
   }
@@ -330,6 +322,7 @@ class Editor extends Component {
 
     const {
       cursor,
+      onResize,
       showEditor,
       showPreview,
     } = this.state
@@ -338,6 +331,7 @@ class Editor extends Component {
       <div
         className={cx('Editor', {
           'Editor--preview': showPreview,
+          'Editor--onResize': showPreview && onResize,
         })}
       >
 
@@ -403,7 +397,10 @@ class Editor extends Component {
           </div>
 
           {showPreview && (
-            <DragResize />
+            <DragResize
+              onDragStart={() => this.setState({ onResize: true })}
+              onDragEnd={() => this.setState({ onResize: false })}
+            />
           )}
 
           {/* -- RIGHT PANEL -- */}

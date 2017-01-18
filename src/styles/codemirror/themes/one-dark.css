@@ -7,7 +7,7 @@
   color: hsl(220, 14%, 71%);
 }
 .cm-s-one-dark div.CodeMirror-selected {
-  background: rgba(204, 217, 255,0.05);
+  background: #3e4451;
 }
 .cm-s-one-dark .CodeMirror-focused div.CodeMirror-selected {
   background: rgba(204, 217, 255,0.09);
@@ -32,7 +32,7 @@
 }
 .cm-s-one-dark .CodeMirror-linenumber {
   padding: 0 8px 0 10px;
-  min-width: 20px;
+  min-width: 24px;
   text-align: right;
   white-space: nowrap;
   color: #636d83;
@@ -96,8 +96,12 @@
   color: #abb2bf;
 }
 
-/* Syntax Theme /---------------------------------------------------------------------------------- */
+.cm-s-one-dark .cm-matchhighlight {
+  box-shadow: inset 0 0 0 1px hsl(220, 14%, 71%);
+  border-radius: 3px;
+}
 
+/* Syntax Theme /---------------------------------------------------------------------------------- */
 
 /* markdown */
 .cm-s-one-dark .cm-header {color: #e06c75;}

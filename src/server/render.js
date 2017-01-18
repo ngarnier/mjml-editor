@@ -1,54 +1,28 @@
 import React from 'react'
-import thunk from 'redux-thunk'
+import { renderToStaticMarkup, renderToString } from 'react-dom/server'
 
-import {
-  fromJS,
-} from 'immutable'
-
-import {
-  renderToStaticMarkup,
-  renderToString,
-} from 'react-dom/server'
-
-import {
-  createStore,
-  applyMiddleware,
-} from 'redux'
-
-import {
-  Provider,
-} from 'react-redux'
-
-import {
-  createServerRenderContext,
-  ServerRouter,
-} from 'react-router'
-
+import { createServerRenderContext, ServerRouter } from 'react-router'
+import { createStore, applyMiddleware } from 'redux'
 import { matchRoutesToLocation } from 'react-router-addons-routes'
+import { Provider } from 'react-redux'
+import thunk from 'redux-thunk'
+import shortid from 'shortid'
+import path from 'path'
 
-import reducers from 'reducers'
-
+import { setProfile, setAccessToken } from 'actions/user'
 import apiMiddleware from 'middlewares/api'
-
+import reducers from 'reducers'
 import routes from 'routes'
-
-import { setUser } from 'actions/user'
 
 import Application from 'components/Application'
 import Html from 'components/Html'
 
-const stats = process.env.NODE_ENV === 'production'
-  ? require(`${process.cwd()}/dist/stats.json`)
+const stats = __PROD__
+  ? require(path.resolve(__dirname, '../../dist/stats.json'))
   : {}
 
 export default async function render (req, res) {
   try {
-
-    // TODO: handle favicon
-    if (req.url === '/favicon.ico') {
-      return res.status(404).end()
-    }
-
     const context = createServerRenderContext()
     const result = context.getResult()
 
@@ -66,25 +40,8 @@ export default async function render (req, res) {
     const store = createStore(reducers, {}, middlewares)
 
     if (req.user) {
-      store.dispatch(setUser(req.user.profile._json))
-    }
-
-    const {
-      editor,
-    } = req.session
-
-    if (editor.activeTab) {
-      store.dispatch({
-        type: 'SET_ACTIVE_TAB',
-        payload: editor.activeTab,
-      })
-    }
-
-    if (editor.tabs) {
-      store.dispatch({
-        type: 'SET_TABS',
-        payload: fromJS(editor.tabs),
-      })
+      store.dispatch(setProfile(req.user.profile))
+      store.dispatch(setAccessToken(req.user.accessToken))
     }
 
     // pre-fetch data
@@ -95,6 +52,8 @@ export default async function render (req, res) {
       dispatch: store.dispatch,
       params,
     }
+
+    const socketRoom = params.socketRoom || shortid.generate()
 
     const dataPromises = matchedRoutes
       .filter(route => route.component.load)
@@ -116,6 +75,7 @@ export default async function render (req, res) {
     const markup = renderToStaticMarkup(
       <Html
         content={content}
+        socketRoom={socketRoom}
         state={store.getState()}
         stats={stats}
       />
@@ -123,8 +83,6 @@ export default async function render (req, res) {
 
     res.end(markup)
   } catch (err) {
-    res
-      .status(500)
-      .send(err.stack)
+    res.status(500).send(err.stack)
   }
 }

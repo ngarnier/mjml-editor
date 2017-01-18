@@ -3,6 +3,9 @@ export function loadGist (gistID) {
     type: 'API:LOAD_GIST',
     payload: {
       url: `/github/gists/${gistID}`,
+      socketOnSuccess: {
+        gistID,
+      },
     },
   }
 }

@@ -5,9 +5,10 @@
   justify-content: flex-end;
   padding: 0 10px;
   position: relative;
-  width: 100%;
 
   &-Signin {
+    user-select: none;
+
     a {
       align-items: center;
       color: #d7dae0;

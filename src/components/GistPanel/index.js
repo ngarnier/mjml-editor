@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import './styles.scss'
-
 import {
   getActiveTab,
 } from 'reducers/editor'
@@ -15,6 +13,8 @@ import Modal from 'components/Modal'
 import Button from 'components/Button'
 
 import GistPanelFile from './GistPanelFile'
+
+import './styles.scss'
 
 @connect(state => ({
   gist: state.gist,

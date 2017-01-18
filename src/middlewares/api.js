@@ -16,6 +16,8 @@ export default store => next => async action => {
   // getState: to eventually pass state to handlers
   const { dispatch, getState } = store
 
+  const state = getState()
+
   // extract prefix from action type
   // e.g 'API:FETCH_GIST => FETCH_GIST'
   const prefix = action.type.split(':')[1]
@@ -23,12 +25,13 @@ export default store => next => async action => {
   // extract data from action payload
   // to build request
   const {
-    url,
-    method = 'get',
-    query,
     data,
     extra,
+    headers = {},
+    method = 'get',
+    query,
     socketOnSuccess,
+    url,
   } = action.payload
 
   // start loader which name is prefix
@@ -36,16 +39,22 @@ export default store => next => async action => {
 
   try {
 
-    // build request params
+    const accessToken = state.user.get('accessToken')
 
+    if (accessToken) {
+      headers['x-access-token'] = accessToken
+    }
+
+    // build request params
     const r = {
       url: `${__API_URL__}${url}`,
       method,
+      headers,
     }
 
     if (data) {
       r.data = typeof data === 'function'
-        ? data(getState())
+        ? data(state)
         : data
     }
 
@@ -77,7 +86,7 @@ export default store => next => async action => {
       const dataSocket = typeof socketOnSuccess === 'function'
         ? socketOnSuccess(successPayload)
         : typeof socketOnSuccess === 'boolean'
-          ? undefined
+          ? null
           : socketOnSuccess
 
       socket.emit(typeSuccess, dataSocket)

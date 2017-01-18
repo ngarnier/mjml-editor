@@ -5,6 +5,28 @@
   justify-content: flex-end;
 }
 
+.RateLimit--full {
+  .RateLimit-Limit {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+
+  .RateLimit-Remaining {
+    display: none;
+  }
+}
+
+.RateLimit--empty {
+  .RateLimit-Limit {
+    display: none;
+  }
+
+  .RateLimit-Remaining {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+}
+
 .RateLimit-Reset {
   margin-right: 10px;
 }

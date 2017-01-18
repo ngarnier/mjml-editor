@@ -1,7 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 
-import { loadGist } from 'actions/gists'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+
+import { addTab, removeActiveTab } from 'actions/editor'
 import { getRateLimit } from 'actions/ratelimit'
+import { loadGist } from 'actions/gists'
 
 import Auth from 'components/Auth'
 import Editor from 'components/Editor'
@@ -13,6 +17,12 @@ import IconMjml from 'icons/Mjml'
 
 import './styles.scss'
 
+@connect(null, dispatch => ({
+  ...bindActionCreators({
+    addTab,
+    removeActiveTab,
+  }, dispatch),
+}))
 class Home extends Component {
 
   static contextTypes = {
@@ -44,6 +54,29 @@ class Home extends Component {
         break
       }
     })
+
+    document.addEventListener('keydown', this.handleKeydown)
+  }
+
+  componentWillUnmount () {
+    document.removeEventListener('keydown', this.handleKeydown)
+  }
+
+  handleKeydown = e => {
+    const {
+      addTab,
+      removeActiveTab,
+    } = this.props
+
+    switch (true) {
+      case (e.ctrlKey && e.altKey && e.keyCode === 78): // ctrl+alt+n
+        addTab()
+        break
+
+      case (e.ctrlKey && e.altKey && e.keyCode === 87): // ctrl+alt+w
+        removeActiveTab()
+        break
+    }
   }
 
   render () {

@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import cx from 'classnames'
 
-import { addTab } from 'actions/editor'
+import { addTab, removeTab } from 'actions/editor'
 
 import { Tabs, Tab } from 'components/Tabs'
 import DragResize from 'components/DragResize'
@@ -41,9 +41,6 @@ import './styles.scss'
   }),
   dispatch => ({
 
-    // remove a tab
-    removeTab: id => dispatch({ type: 'REMOVE_TAB', payload: id }),
-
     // set this id as current active tab
     setActiveTab: id => dispatch({ type: 'SET_ACTIVE_TAB', payload: id }),
 
@@ -55,6 +52,9 @@ import './styles.scss'
 
       // add a tab
       addTab,
+
+      // remove a tab
+      removeTab,
 
     }, dispatch),
 

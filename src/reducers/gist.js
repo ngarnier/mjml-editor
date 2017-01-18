@@ -44,4 +44,8 @@ export default handleActions({
 
   },
 
+  SET_GIST_FILES: (state, { payload: files }) => {
+    return state.set('files', fromJS(files))
+  },
+
 }, initialState)

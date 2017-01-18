@@ -65,9 +65,10 @@ export function saveCurrentTabToGist () {
 
     return dispatch(action)
 
-      // if there is no current gist, redirect to newly created gist
       .then(res => {
         const hasGist = !!getState().gist.get('id')
+
+        // if there is no current gist, redirect to newly created gist
         if (!hasGist) {
           const { gistID } = res
 
@@ -75,6 +76,12 @@ export function saveCurrentTabToGist () {
           history.replaceState({}, '', `/gists/${gistID}`)
 
           return dispatch(loadGist(gistID))
+        } else {
+          // else, send all files to reducer to refresh files list
+          dispatch({
+            type: 'SET_GIST_FILES',
+            payload: res.files,
+          })
         }
       })
 

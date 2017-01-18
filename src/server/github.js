@@ -105,6 +105,7 @@ router.post('/gists', githubFactory, (req, res) => {
     .then(data => {
       res.json({
         gistID: data.id,
+        files: data.files,
         ...getRateLimit(data),
       })
     })

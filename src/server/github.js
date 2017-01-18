@@ -142,7 +142,7 @@ router.delete('/gists', githubFactory, (req, res) => {
 })
 
 // rename a file
-router.put('/gists/:gistID/name', (req, res) => {
+router.put('/gists/:gistID/name', githubFactory, (req, res) => {
 
   const {
     gistID,
@@ -157,9 +157,7 @@ router.put('/gists/:gistID/name', (req, res) => {
     return res.status(400).send({ message: 'No gistID specified' })
   }
 
-  const github = githubFactory(req)
-
-  github.gists
+  req.githubApi.gists
     .edit({
       id: gistID,
       files: {

@@ -67,7 +67,11 @@ class GistPanelFile extends Component {
       ? value
       : `${value}.mjml`
 
-    renameFile(file.get('filename'), newName)
+    const oldName = file.get('filename')
+
+    if (oldName !== newName) {
+      renameFile(oldName, newName)
+    }
 
     this.stopEditing()
   }
@@ -126,7 +130,7 @@ class GistPanelFile extends Component {
             className="GistPanelFile--input"
             onKeyDown={this.handleKeyDown}
             onChange={this.handleChange}
-            onBlur={this.saveEditing}
+            onBlur={this.stopEditing}
           />
         ) : [
           <div

@@ -104,6 +104,9 @@ export default store => next => async action => {
     // stop loader
     dispatch(stopLoader(prefix))
 
+    // return promise
+    return successPayload
+
   } catch (err) {
 
     // dispatch error

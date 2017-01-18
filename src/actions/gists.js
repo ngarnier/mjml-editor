@@ -1,12 +1,38 @@
+import { fromJS } from 'immutable'
+
+import {
+  addTab,
+} from 'actions/editor'
+
 export function loadGist (gistID) {
-  return {
-    type: 'API:LOAD_GIST',
-    payload: {
-      url: `/github/gists/${gistID}`,
-      socketOnSuccess: {
-        gistID,
+  return function (dispatch) {
+
+    const action = {
+      type: 'API:LOAD_GIST',
+      payload: {
+        url: `/github/gists/${gistID}`,
+        socketOnSuccess: {
+          gistID,
+        },
       },
-    },
+    }
+
+    // load the gist
+    return dispatch(action)
+
+      // eventually open tab with first file
+      .then(res => {
+
+        const {
+          files,
+        } = res
+
+        if (files.length) {
+          dispatch(addTab(fromJS(files[0])))
+        }
+
+      })
+
   }
 }
 

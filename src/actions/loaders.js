@@ -1,5 +1,5 @@
-export function startLoader (name) {
-  return { type: 'LOADING_START', payload: name }
+export function startLoader (name, value = true) {
+  return { type: 'LOADING_START', payload: { name, value } }
 }
 
 export function stopLoader (name) {

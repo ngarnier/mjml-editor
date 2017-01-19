@@ -7,6 +7,8 @@
     "no-empty": 0,
     "id-length": 0,
     "no-inline-comments": 0,
+    "default-case": 0,
+    "indent": [2, 2, { "SwitchCase": 1 }],
   },
   "globals": {
     "Promise": false,

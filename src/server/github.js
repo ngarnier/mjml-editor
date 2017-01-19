@@ -105,6 +105,7 @@ router.post('/gists', githubFactory, (req, res) => {
     .then(data => {
       res.json({
         gistID: data.id,
+        files: data.files,
         ...getRateLimit(data),
       })
     })
@@ -130,6 +131,40 @@ router.delete('/gists', githubFactory, (req, res) => {
       id: gistID,
       files: {
         [name]: null,
+      },
+    })
+    .then(() => {
+      res.status(200).end()
+    })
+    .catch(err => {
+      res.status(500).send(err)
+    })
+
+})
+
+// rename a file
+router.put('/gists/:gistID/name', githubFactory, (req, res) => {
+
+  const {
+    gistID,
+  } = req.params
+
+  const {
+    oldName,
+    newName,
+  } = req.body
+
+  if (!gistID) {
+    return res.status(400).send({ message: 'No gistID specified' })
+  }
+
+  req.githubApi.gists
+    .edit({
+      id: gistID,
+      files: {
+        [oldName]: {
+          filename: newName,
+        },
       },
     })
     .then(() => {

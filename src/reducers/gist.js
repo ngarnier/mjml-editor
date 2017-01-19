@@ -24,4 +24,28 @@ export default handleActions({
 
   },
 
+  RENAME_FILE_SUCCESS: (state, { payload }) => {
+
+    const {
+      newName,
+      oldName,
+    } = payload.extra
+
+    return state
+      .update(
+        'files',
+        files => files.map(f => {
+          if (f.get('filename') === oldName) {
+            return f.set('filename', newName)
+          }
+          return f
+        })
+      )
+
+  },
+
+  SET_GIST_FILES: (state, { payload: files }) => {
+    return state.set('files', fromJS(files))
+  },
+
 }, initialState)

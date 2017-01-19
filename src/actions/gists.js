@@ -1,12 +1,38 @@
+import { fromJS } from 'immutable'
+
+import {
+  addTab,
+} from 'actions/editor'
+
 export function loadGist (gistID) {
-  return {
-    type: 'API:LOAD_GIST',
-    payload: {
-      url: `/github/gists/${gistID}`,
-      socketOnSuccess: {
-        gistID,
+  return function (dispatch) {
+
+    const action = {
+      type: 'API:LOAD_GIST',
+      payload: {
+        url: `/github/gists/${gistID}`,
+        socketOnSuccess: {
+          gistID,
+        },
       },
-    },
+    }
+
+    // load the gist
+    return dispatch(action)
+
+      // eventually open tab with first file
+      .then(res => {
+
+        const {
+          files,
+        } = res
+
+        if (files.length) {
+          dispatch(addTab(fromJS(files[0])))
+        }
+
+      })
+
   }
 }
 
@@ -14,25 +40,51 @@ export function loadGist (gistID) {
 // if gist already exists for this session, use it
 // else, create a new gist for it
 export function saveCurrentTabToGist () {
-  return {
-    type: 'API:SAVE_CURRENT_TO_GIST',
-    payload: {
-      method: 'post',
-      url: '/github/gists',
-      data: state => {
+  return function (dispatch, getState) {
 
-        const gistID = state.gist.get('id')
-        const tabs = state.editor.get('tabs')
-        const activeTab = state.editor.get('activeTab')
-        const tab = tabs.get(tabs.findIndex(t => t.get('id') === activeTab))
+    const action = {
+      type: 'API:SAVE_CURRENT_TO_GIST',
+      payload: {
+        method: 'post',
+        url: '/github/gists',
+        data: state => {
 
-        return {
-          gistID,
-          tab,
-        }
+          const gistID = state.gist.get('id')
+          const tabs = state.editor.get('tabs')
+          const activeTab = state.editor.get('activeTab')
+          const tab = tabs.get(tabs.findIndex(t => t.get('id') === activeTab))
 
+          return {
+            gistID,
+            tab,
+          }
+
+        },
       },
-    },
+    }
+
+    return dispatch(action)
+
+      .then(res => {
+        const hasGist = !!getState().gist.get('id')
+
+        // if there is no current gist, redirect to newly created gist
+        if (!hasGist) {
+          const { gistID } = res
+
+          // faster than waiting for socket :D
+          history.replaceState({}, '', `/gists/${gistID}`)
+
+          return dispatch(loadGist(gistID))
+        } else {
+          // else, send all files to reducer to refresh files list
+          dispatch({
+            type: 'SET_GIST_FILES',
+            payload: res.files,
+          })
+        }
+      })
+
   }
 }
 
@@ -43,6 +95,7 @@ export function removeFileFromGist (name) {
     payload: {
       method: 'delete',
       url: '/github/gists',
+      loaderValue: name,
       data: state => {
         const gistID = state.gist.get('id')
         return {
@@ -53,6 +106,21 @@ export function removeFileFromGist (name) {
       extra: {
         name,
       },
+    },
+  }
+}
+
+// rename the file from oldName to newName
+export function renameFile (oldName, newName) {
+  const payload = { oldName, newName }
+  return {
+    type: 'API:RENAME_FILE',
+    payload: {
+      method: 'put',
+      url: state => `/github/gists/${state.gist.get('id')}/name`,
+      loaderValue: oldName,
+      data: payload,
+      extra: payload,
     },
   }
 }

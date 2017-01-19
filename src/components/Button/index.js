@@ -9,11 +9,12 @@ class Button extends Component {
   handleClick = () => {
 
     const {
+      disabled,
       isLoading,
       onClick,
     } = this.props
 
-    if (isLoading) { return }
+    if (isLoading || disabled) { return }
 
     onClick()
 
@@ -22,16 +23,18 @@ class Button extends Component {
   render () {
 
     const {
+      children,
+      disabled,
+      isLoading,
       primary,
       success,
-      children,
-      isLoading,
     } = this.props
 
     const className = cx('Button', {
+      disabled,
+      isLoading,
       primary,
       success,
-      isLoading,
     })
 
     return (

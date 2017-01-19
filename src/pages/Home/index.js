@@ -36,6 +36,8 @@ class Home extends Component {
 
     if (params.gistID) {
       promises.push(dispatch(loadGist(params.gistID)))
+    } else {
+      dispatch(addTab())
     }
 
     promises.push(dispatch(getRateLimit()))
@@ -50,10 +52,10 @@ class Home extends Component {
 
     socket.on('URL_CHANGE', ({ type, url }) => {
       switch (type) {
-      case 'replace':
-        history.replaceState({}, '', url)
+        case 'replace':
+          history.replaceState({}, '', url)
 
-        break
+          break
       }
     })
 

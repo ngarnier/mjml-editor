@@ -133,6 +133,26 @@ export default handleActions({
       .set('activeTab', isActive ? null : activeTab)
   },
 
+  RENAME_FILE_SUCCESS: (state, { payload }) => {
+
+    const {
+      newName,
+      oldName,
+    } = payload.extra
+
+    return state
+      .update(
+        'tabs',
+        tabs => tabs.map(f => {
+          if (f.get('name') === oldName) {
+            return f.set('name', newName)
+          }
+          return f
+        })
+      )
+
+  },
+
 }, initialState)
 
 export function getActiveTab (state) {

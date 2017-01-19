@@ -1,11 +1,18 @@
 import React, { Component } from 'react'
-
-import cx from 'classnames'
 import { connect } from 'react-redux'
 
-import { getActiveTab } from 'reducers/editor'
+import {
+  getActiveTab,
+} from 'reducers/editor'
 
-import { addTab } from 'actions/editor'
+import {
+  removeFileFromGist,
+} from 'actions/gists'
+
+import Modal from 'components/Modal'
+import Button from 'components/Button'
+
+import GistPanelFile from './GistPanelFile'
 
 import './styles.scss'
 
@@ -13,15 +20,48 @@ import './styles.scss'
   gist: state.gist,
   activeTab: getActiveTab(state),
 }), {
-  addTab,
+  removeFileFromGist,
 })
 class GistPanel extends Component {
+
+  state = {
+    fileToDelete: null,
+    isModalDeleteOpened: false,
+  }
+
+  openModalDelete = file => {
+    this.setState({
+      fileToDelete: file,
+      isModalDeleteOpened: true,
+    })
+  }
+
+  closeModalDelete = () => {
+    this.setState({
+      isModalDeleteOpened: false,
+      fileToDelete: null,
+    })
+  }
+
+  removeFile = () => {
+    const {
+      fileToDelete,
+    } = this.state
+    const {
+      removeFileFromGist,
+    } = this.props
+    removeFileFromGist(fileToDelete.get('filename'))
+    this.closeModalDelete()
+  }
 
   render () {
 
     const {
+      isModalDeleteOpened,
+    } = this.state
+
+    const {
       gist,
-      addTab,
       activeTab,
     } = this.props
 
@@ -32,16 +72,31 @@ class GistPanel extends Component {
     return (
       <div className="GistPanel">
         {gist.get('files').entrySeq().map(([ , file ]) => (
-          <div
+          <GistPanelFile
             key={file.get('filename')}
-            className={cx('GistPanel--file', {
-              active: file.get('filename') === activeTabName,
-            })}
-            onClick={() => addTab(file)}
-          >
-            {file.get('filename')}
-          </div>
+            file={file}
+            activeTabName={activeTabName}
+            onDelete={this.openModalDelete}
+          />
         ))}
+
+        <Modal
+          onClose={this.closeModalDelete}
+          isOpened={isModalDeleteOpened}
+        >
+          <div style={{ marginBottom: 20 }}>
+            {'Delete file?'}
+          </div>
+          <div className="horizontal-list">
+            <Button onClick={this.removeFile}>
+              {'YES'}
+            </Button>
+            <Button onClick={this.closeModalDelete}>
+              {'NO'}
+            </Button>
+          </div>
+        </Modal>
+
       </div>
     )
   }

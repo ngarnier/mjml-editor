@@ -16,8 +16,6 @@ export default store => next => async action => {
   // getState: to eventually pass state to handlers
   const { dispatch, getState } = store
 
-  const state = getState()
-
   // extract prefix from action type
   // e.g 'API:FETCH_GIST => FETCH_GIST'
   const prefix = action.type.split(':')[1]
@@ -25,6 +23,7 @@ export default store => next => async action => {
   // extract data from action payload
   // to build request
   const {
+    loaderValue = true,
     data,
     extra,
     headers = {},
@@ -35,9 +34,13 @@ export default store => next => async action => {
   } = action.payload
 
   // start loader which name is prefix
-  dispatch(startLoader(prefix))
+  dispatch(startLoader(prefix, loaderValue))
 
   try {
+
+    const state = getState()
+
+    // build request params
 
     const accessToken = state.user.get('accessToken')
 
@@ -47,7 +50,7 @@ export default store => next => async action => {
 
     // build request params
     const r = {
-      url: `${__API_URL__}${url}`,
+      url: `${__API_URL__}${typeof url === 'function' ? url(state) : url}`,
       method,
       headers,
     }
@@ -100,6 +103,9 @@ export default store => next => async action => {
 
     // stop loader
     dispatch(stopLoader(prefix))
+
+    // return promise
+    return successPayload
 
   } catch (err) {
 

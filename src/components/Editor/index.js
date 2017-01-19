@@ -340,6 +340,10 @@ class Editor extends Component {
         })}
       >
 
+        <TabActions
+          disabledSave={tabs.size === 0}
+        />
+
         <Tabs>
 
           <Tab
@@ -353,8 +357,6 @@ class Editor extends Component {
           {tabs.map(this.renderTab)}
 
         </Tabs>
-
-        {tabs.size > 0 && <TabActions />}
 
         <div className="Editor-Wrapper">
 

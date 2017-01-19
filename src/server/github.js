@@ -15,6 +15,8 @@ function githubFactory (req, res, next) {
       type: 'token',
       token: accessToken,
     })
+
+    req.isAuth = true
   }
 
   req.githubApi = github
@@ -73,7 +75,7 @@ router.post('/gists', githubFactory, (req, res) => {
 
   let promise
 
-  if (gistID) {
+  if (gistID && req.isAuth) {
 
     const payload = {
       id: gistID,
@@ -104,7 +106,7 @@ router.post('/gists', githubFactory, (req, res) => {
   promise
     .then(data => {
       res.json({
-        id: data.id,
+        gistID: data.id,
         files: data.files,
         ...getRateLimit(data),
       })
@@ -131,6 +133,40 @@ router.delete('/gists', githubFactory, (req, res) => {
       id: gistID,
       files: {
         [name]: null,
+      },
+    })
+    .then(() => {
+      res.status(200).end()
+    })
+    .catch(err => {
+      res.status(500).send(err)
+    })
+
+})
+
+// rename a file
+router.put('/gists/:gistID/name', githubFactory, (req, res) => {
+
+  const {
+    gistID,
+  } = req.params
+
+  const {
+    oldName,
+    newName,
+  } = req.body
+
+  if (!gistID) {
+    return res.status(400).send({ message: 'No gistID specified' })
+  }
+
+  req.githubApi.gists
+    .edit({
+      id: gistID,
+      files: {
+        [oldName]: {
+          filename: newName,
+        },
       },
     })
     .then(() => {

@@ -8,51 +8,29 @@ import { isLoading } from 'reducers/loaders'
 import { saveCurrentTabToGist, removeFileFromGist } from 'actions/gists'
 
 import Button from 'components/Button'
-import Modal from 'components/Modal'
 
 import './style.scss'
 
 @connect(state => ({
-  tab: getActiveTab(state),
   gistID: state.gist.get('id'),
   isSavingGist: isLoading(state, 'SAVE_CURRENT_TO_GIST'),
-  isDeletingGist: isLoading(state, 'REMOVE_FILE_FROM_GIST'),
+  tab: getActiveTab(state),
+  profile: state.user.get('profile'),
 }), {
   saveCurrentTabToGist,
   removeFileFromGist,
 })
 class TabActions extends Component {
 
-  state = {
-    isModalDeleteOpened: false,
-  }
-
-  openModalDelete = () => this.setState({ isModalDeleteOpened: true })
-  closeModalDelete = () => this.setState({ isModalDeleteOpened: false })
-
-  removeFile = () => {
-
-    const {
-      tab,
-      removeFileFromGist,
-    } = this.props
-
-    this.closeModalDelete()
-    removeFileFromGist(tab.get('name'))
-  }
-
   render () {
 
     const {
-      saveCurrentTabToGist,
-      isSavingGist,
-      isDeletingGist,
+      disabledSave,
       gistID,
+      isSavingGist,
+      profile,
+      saveCurrentTabToGist,
     } = this.props
-
-    const {
-      isModalDeleteOpened,
-    } = this.state
 
     return (
       <div className="TabActions">
@@ -60,11 +38,16 @@ class TabActions extends Component {
         <div className="horizontal-list">
 
           <Button
-            success
-            onClick={saveCurrentTabToGist}
+            disabled={disabledSave}
             isLoading={isSavingGist}
+            onClick={saveCurrentTabToGist}
+            success={!disabledSave}
           >
-            {'save'}
+            { gistID
+              ? profile
+                ? 'Save'
+                : 'Fork'
+              : 'Create gist' }
           </Button>
 
           {gistID && (
@@ -73,34 +56,7 @@ class TabActions extends Component {
             </div>
           )}
 
-          {gistID && (
-            <Button
-              danger
-              onClick={this.openModalDelete}
-              isLoading={isDeletingGist}
-            >
-              {'delete'}
-            </Button>
-          )}
-
         </div>
-
-        <Modal
-          onClose={this.closeModalDelete}
-          isOpened={isModalDeleteOpened}
-        >
-          <div style={{ marginBottom: 20 }}>
-            {'Delete file?'}
-          </div>
-          <div className="horizontal-list">
-            <Button onClick={this.removeFile}>
-              {'YES'}
-            </Button>
-            <Button onClick={this.closeModalDelete}>
-              {'NO'}
-            </Button>
-          </div>
-        </Modal>
 
       </div>
     )

@@ -8,7 +8,11 @@ const initialState = fromJS({
 
 export default handleActions({
 
+  NEW_GIST: () => fromJS(initialState),
+
   LOAD_GIST_SUCCESS: (state, { payload: gist }) => fromJS(gist),
+
+  SAVE_CURRENT_TO_GIST_SUCCESS: (state, { payload: gist }) => fromJS(gist),
 
   REMOVE_FILE_FROM_GIST_SUCCESS: (state, { payload }) => {
 

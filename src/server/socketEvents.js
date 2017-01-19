@@ -62,4 +62,11 @@ export default (io, socket, session) => session(socket.handshake, {}, err => {
       url: `/gists/${gistID}`,
     })
   })
+
+  socket.on('SAVE_CURRENT_TO_GIST_SUCCESS', ({ gistID }) => {
+    io.to(currentRoom).emit('URL_CHANGE', {
+      type: 'replace',
+      url: `/gists/${gistID}`,
+    })
+  })
 })

@@ -31,7 +31,7 @@ class GistPanel extends Component {
 
     return (
       <div className="GistPanel">
-        {gist.get('files').map(file => (
+        {gist.get('files').entrySeq().map(([ , file ]) => (
           <div
             key={file.get('filename')}
             className={cx('GistPanel--file', {

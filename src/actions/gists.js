@@ -1,3 +1,13 @@
+export function newGist () {
+  if (__BROWSER__) {
+    history.replaceState({}, '', '/')
+  }
+
+  return {
+    type: 'NEW_GIST',
+  }
+}
+
 export function loadGist (gistID) {
   return {
     type: 'API:LOAD_GIST',
@@ -19,6 +29,9 @@ export function saveCurrentTabToGist () {
     payload: {
       method: 'post',
       url: '/github/gists',
+      socketOnSuccess: ({ id }) => ({
+        gistID: id,
+      }),
       data: state => {
 
         const gistID = state.gist.get('id')

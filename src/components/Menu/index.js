@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 
 import getGistID from 'helpers/getGistID'
 
-import { loadGist } from 'actions/gists'
+import { loadGist, newGist } from 'actions/gists'
 import { openModal, closeModal } from 'actions/modals'
 
 import { isLoading } from 'reducers/loaders'
@@ -27,6 +27,9 @@ import './styles.scss'
 
     // load a gist
     loadGist,
+
+    // new gist
+    newGist,
 
     openModal,
     closeModal,
@@ -68,10 +71,6 @@ class Menu extends Component {
     }
   }
 
-  handleChangeGist = value => this.setState({
-    gistValue: value,
-  })
-
   toggleModalOpen = () => {
     const {
       isMenuOpen,
@@ -104,6 +103,12 @@ class Menu extends Component {
     }
   }
 
+  handleChangeInputGist = value => this.setState({
+    gistValue: value,
+  })
+
+  handleClickNewGist = () => this.props.newGist()
+
   render () {
     const {
       isLoadingGist,
@@ -116,6 +121,12 @@ class Menu extends Component {
 
     return (
       <div className="Menu">
+        <div
+          className="Menu-Item"
+          onClick={this.handleClickNewGist}
+        >
+          New gist
+        </div>
         <div
           className="Menu-Item"
           onClick={this.toggleModalOpen}
@@ -132,7 +143,7 @@ class Menu extends Component {
             onSubmit={this.openGist}
           >
             <Input
-              onChange={this.handleChangeGist}
+              onChange={this.handleChangeInputGist}
               placeholder="Gist id or gist url"
               ref={r => this.input = r}
               value={gistValue}

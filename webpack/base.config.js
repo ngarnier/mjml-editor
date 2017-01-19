@@ -51,7 +51,7 @@ export default {
   plugins: [
     new webpack.DefinePlugin(Object.assign({}, mapValues(globals, v => JSON.stringify(v)), {
       __BROWSER__: JSON.stringify(true),
-      'process.env.NODE_ENV': JSON.stringify(__ENV__),
+      'process.env.NODE_ENV': JSON.stringify(globals.__ENV__),
     })),
     new webpack.LoaderOptionsPlugin({
       options: {

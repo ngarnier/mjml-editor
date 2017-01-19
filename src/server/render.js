@@ -3,14 +3,13 @@ import { renderToStaticMarkup, renderToString } from 'react-dom/server'
 
 import { createServerRenderContext, ServerRouter } from 'react-router'
 import { createStore, applyMiddleware } from 'redux'
-import { fromJS } from 'immutable'
 import { matchRoutesToLocation } from 'react-router-addons-routes'
 import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 import shortid from 'shortid'
 import path from 'path'
 
-import { setUser } from 'actions/user'
+import { setProfile, setAccessToken } from 'actions/user'
 import apiMiddleware from 'middlewares/api'
 import reducers from 'reducers'
 import routes from 'routes'
@@ -41,25 +40,8 @@ export default async function render (req, res) {
     const store = createStore(reducers, {}, middlewares)
 
     if (req.user) {
-      store.dispatch(setUser(req.user.profile._json))
-    }
-
-    const {
-      editor,
-    } = req.session
-
-    if (editor.activeTab) {
-      store.dispatch({
-        type: 'SET_ACTIVE_TAB',
-        payload: editor.activeTab,
-      })
-    }
-
-    if (editor.tabs) {
-      store.dispatch({
-        type: 'SET_TABS',
-        payload: fromJS(editor.tabs),
-      })
+      store.dispatch(setProfile(req.user.profile))
+      store.dispatch(setAccessToken(req.user.accessToken))
     }
 
     // pre-fetch data

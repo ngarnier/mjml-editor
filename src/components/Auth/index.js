@@ -1,9 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 
 import { connect } from 'react-redux'
-
-import cx from 'classnames'
 import { Motion, spring } from 'react-motion'
+import cx from 'classnames'
+
+import { logout } from 'actions/user'
+import { getRateLimit } from 'actions/ratelimit'
 
 import { Dropdown, DropdownItem } from 'components/Dropdown'
 
@@ -11,12 +13,12 @@ import IconGithub from 'icons/Github'
 
 import './styles.scss'
 
-@connect(
-  ({ user }) => ({ user }),
-  dispatch => ({
-    logout: () => dispatch({ type: 'LOGOUT' }),
-  })
-)
+@connect(({ user }) => ({
+  profile: user.get('profile'),
+}), {
+  logout,
+  getRateLimit,
+})
 class Auth extends Component {
 
   static contextTypes = {
@@ -28,8 +30,8 @@ class Auth extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.user === null &&
-        this.props.user !== null) {
+    if (!nextProps.profile &&
+        this.props.profile) {
       this.setState({
         showDropdown: false,
       })
@@ -48,15 +50,20 @@ class Auth extends Component {
     const {
       socket,
     } = this.context
+    const {
+      getRateLimit,
+      logout,
+    } = this.props
+
+    logout()
+    getRateLimit()
 
     socket.emit('logout')
-
-    this.props.logout()
   }
 
   render () {
     const {
-      user,
+      profile,
     } = this.props
     const {
       showDropdown,
@@ -65,9 +72,9 @@ class Auth extends Component {
     return (
       <div
         className={cx('Auth', {
-          'Auth--signed': user !== null,
+          'Auth--signed': profile,
         })}>
-        { user === null ?
+        { !profile ?
           <div className="Auth-Signin">
             <a href="/login">
               Signin with Github <IconGithub />
@@ -77,7 +84,7 @@ class Auth extends Component {
             className="Auth-Profile"
             onClick={this.handleToggleDropdown}
           >
-            Signed in as&nbsp;<strong>{user.login}</strong> <img src={user.avatar_url} />
+            Signed in as&nbsp;<strong>{profile.get('login')}</strong> <img src={profile.get('avatar_url')} />
           </div> }
         <Motion
           style={{

@@ -13,33 +13,44 @@ import render from 'server/render'
 
 import socketEvents from 'server/socketEvents'
 
+const {
+  GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET,
+  HOST,
+  PORT,
+  SESSION_SECRET,
+} = process.env
+
+const RedisStore = require('connect-redis')(expressSession)
+
 const app = express()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
 
-const port = process.env.PORT || 3333
+const port = PORT || 3333
 
 if (__DEV__) {
   require('server/webpack')(app)
 }
 
 const session = expressSession({
-  secret: 'keyboard cat',
   resave: false,
   saveUninitialized: false,
+  secret: SESSION_SECRET,
+  store: new RedisStore(),
 })
 
 passport.serializeUser((user, done) => done(null, user))
 passport.deserializeUser((user, done) => done(null, user))
 
 passport.use(new StrategyGithub({
-  callbackURL: `${process.env.HOST}/login/callback`,
-  clientID: process.env.GITHUB_CLIENT_ID,
-  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  callbackURL: `${HOST}/login/callback`,
+  clientID: GITHUB_CLIENT_ID,
+  clientSecret: GITHUB_CLIENT_SECRET,
 }, (accessToken, refreshToken, profile, done) => {
   done(null, {
     accessToken,
-    profile,
+    profile: profile._json,
   })
 }))
 
@@ -57,18 +68,6 @@ app.use(bodyParser.urlencoded({
 app.use(session)
 app.use(passport.initialize())
 app.use(passport.session())
-
-app.use((req, res, next) => {
-  if (!req.session.editor) {
-    req.session.editor = {}
-  }
-
-  if (req.user && !req.session.user) {
-    req.session.user = req.user
-  }
-
-  next()
-})
 
 app.use(auth)
 app.use('/api/github', github)

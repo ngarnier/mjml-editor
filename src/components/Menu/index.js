@@ -6,8 +6,10 @@ import { connect } from 'react-redux'
 import getGistID from 'helpers/getGistID'
 
 import { loadGist } from 'actions/gists'
+import { openModal, closeModal } from 'actions/modals'
 
 import { isLoading } from 'reducers/loaders'
+import { isModalOpen } from 'reducers/modals'
 
 import Input from 'components/Input'
 import Modal from 'components/Modal'
@@ -17,6 +19,7 @@ import './styles.scss'
 
 @connect(state => ({
   isLoadingGist: isLoading(state, 'LOAD_GIST'),
+  isMenuOpen: isModalOpen(state, 'OPEN_FILE'),
 }), dispatch => ({
 
   // bind raw actions with dispatch
@@ -25,6 +28,9 @@ import './styles.scss'
     // load a gist
     loadGist,
 
+    openModal,
+    closeModal,
+
   }, dispatch),
 
 }))
@@ -32,20 +38,32 @@ class Menu extends Component {
 
   state = {
     gistValue: '',
-    isModalOpenOpened: false,
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.isLoadingGist === true && nextProps.isLoadingGist === false) {
+    const {
+      closeModal,
+      isLoadingGist,
+      isMenuOpen,
+    } = this.props
+
+    if (isLoadingGist && !nextProps.isLoadingGist) {
+      closeModal('OPEN_FILE')
+    }
+
+    if (isMenuOpen && !nextProps.isMenuOpen) {
       this.setState({
         gistValue: '',
-        isModalOpenOpened: false,
       })
     }
   }
 
   componentDidUpdate () {
-    if (this.state.isModalOpenOpened && this.input) {
+    const {
+      isMenuOpen,
+    } = this.props
+
+    if (isMenuOpen && this.input) {
       this.input.focus()
     }
   }
@@ -54,13 +72,19 @@ class Menu extends Component {
     gistValue: value,
   })
 
-  toggleModalOpen = () => this.setState(prev => ({
-    isModalOpenOpened: !prev.isModalOpenOpened,
-  }))
+  toggleModalOpen = () => {
+    const {
+      isMenuOpen,
+      closeModal,
+      openModal,
+    } = this.props
 
-  closeModalOpen = () => this.setState({
-    isModalOpenOpened: false,
-  })
+    if (isMenuOpen) {
+      closeModal('OPEN_FILE')
+    } else {
+      openModal('OPEN_FILE')
+    }
+  }
 
   openGist = e => {
     const {
@@ -83,10 +107,10 @@ class Menu extends Component {
   render () {
     const {
       isLoadingGist,
+      isMenuOpen,
     } = this.props
 
     const {
-      isModalOpenOpened,
       gistValue,
     } = this.state
 
@@ -100,8 +124,8 @@ class Menu extends Component {
         </div>
 
         <Modal
-          onClose={this.closeModalOpen}
-          isOpened={isModalOpenOpened}
+          onClose={this.toggleModalOpen}
+          isOpened={isMenuOpen}
         >
           <form
             className="OpenGist"

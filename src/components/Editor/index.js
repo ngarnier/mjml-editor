@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import cx from 'classnames'
 
-import { addTab } from 'actions/editor'
+import { addTab, removeTab } from 'actions/editor'
 
 import { Tabs, Tab } from 'components/Tabs'
 import DragResize from 'components/DragResize'
@@ -41,9 +41,6 @@ import './styles.scss'
 }),
 dispatch => ({
 
-  // remove a tab
-  removeTab: id => dispatch({ type: 'REMOVE_TAB', payload: id }),
-
   // set this id as current active tab
   setActiveTab: id => dispatch({ type: 'SET_ACTIVE_TAB', payload: id }),
 
@@ -56,7 +53,10 @@ dispatch => ({
     // add a tab
     addTab,
 
-  }, dispatch),
+    // remove a tab
+    removeTab,
+
+    }, dispatch),
 
 }))
 class Editor extends Component {
@@ -84,6 +84,11 @@ class Editor extends Component {
     const {
       showEditor,
     } = this.state
+
+    socket.on('PING_EDITOR', () => {
+      console.log('PING_EDITOR')
+      setTimeout(() => socket.emit('event', 'PONG_EDITOR'), 1e3)
+    })
 
     socket.on('send-html-to-preview', () => {
       this.renderHTML(this.getCurrentValue())

@@ -44,7 +44,6 @@ export default (io, socket, session) => session(socket.handshake, {}, err => {
 
   socket.on('logout', () => {
     delete socket.handshake.session.passport
-    delete socket.handshake.session.user
 
     socket.handshake.session.save()
   })

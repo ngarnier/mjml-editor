@@ -19,7 +19,7 @@ const postcssPlugins = [
   }),
 ]
 
-if (process.env.NODE_ENV !== 'development') {
+if (__DEV__) {
   postcssPlugins.push(
     cssnano({
       autoprefixer: false,
@@ -51,7 +51,7 @@ export default {
   plugins: [
     new webpack.DefinePlugin(Object.assign({}, mapValues(globals, v => JSON.stringify(v)), {
       __BROWSER__: JSON.stringify(true),
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+      'process.env.NODE_ENV': JSON.stringify(__ENV__),
     })),
     new webpack.LoaderOptionsPlugin({
       options: {

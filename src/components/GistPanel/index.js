@@ -71,7 +71,7 @@ class GistPanel extends Component {
 
     return (
       <div className="GistPanel">
-        {gist.get('files').map(file => (
+        {gist.get('files').entrySeq().map(([ , file ]) => (
           <GistPanelFile
             key={file.get('filename')}
             file={file}

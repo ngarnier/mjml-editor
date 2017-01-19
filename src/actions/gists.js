@@ -4,6 +4,16 @@ import {
   addTab,
 } from 'actions/editor'
 
+import { isLoading } from 'reducers/loaders'
+
+export function newGist () {
+  history.replaceState({}, '', '/')
+
+  return {
+    type: 'NEW_GIST',
+  }
+}
+
 export function loadGist (gistID) {
   return function (dispatch) {
 
@@ -42,6 +52,10 @@ export function loadGist (gistID) {
 export function saveCurrentTabToGist () {
   return function (dispatch, getState) {
 
+    if (isLoading(getState(), 'SAVE_CURRENT_TO_GIST')) {
+      return
+    }
+
     const action = {
       type: 'API:SAVE_CURRENT_TO_GIST',
       payload: {
@@ -67,9 +81,10 @@ export function saveCurrentTabToGist () {
 
       .then(res => {
         const hasGist = !!getState().gist.get('id')
+        const isAuth = getState().user.get('profile')
 
-        // if there is no current gist, redirect to newly created gist
-        if (!hasGist) {
+        // if there is no current gist or is not authenticate, redirect to newly created gist
+        if (!hasGist || !isAuth) {
           const { gistID } = res
 
           // faster than waiting for socket :D

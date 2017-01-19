@@ -8,6 +8,8 @@ const initialState = fromJS({
 
 export default handleActions({
 
+  NEW_GIST: () => fromJS(initialState),
+
   LOAD_GIST_SUCCESS: (state, { payload: gist }) => fromJS(gist),
 
   REMOVE_FILE_FROM_GIST_SUCCESS: (state, { payload }) => {
@@ -44,8 +46,6 @@ export default handleActions({
 
   },
 
-  SET_GIST_FILES: (state, { payload: files }) => {
-    return state.set('files', fromJS(files))
-  },
+  SET_GIST_FILES: (state, { payload: files }) => state.set('files', fromJS(files)),
 
 }, initialState)

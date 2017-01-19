@@ -33,33 +33,32 @@ if (__BROWSER__) {
 
 import './styles.scss'
 
-@connect(
-  ({ editor }) => ({
-    activeTab: editor.get('activeTab'),
-    editorSize: editor.get('editorSize'),
-    tabs: editor.get('tabs'),
-  }),
-  dispatch => ({
+@connect(({ gist, editor }) => ({
+  activeTab: editor.get('activeTab'),
+  editorSize: editor.get('editorSize'),
+  gist,
+  tabs: editor.get('tabs'),
+}),
+dispatch => ({
 
-    // set this id as current active tab
-    setActiveTab: id => dispatch({ type: 'SET_ACTIVE_TAB', payload: id }),
+  // set this id as current active tab
+  setActiveTab: id => dispatch({ type: 'SET_ACTIVE_TAB', payload: id }),
 
-    // assigning mjml value to current tab
-    setCurrentValue: mjml => dispatch({ type: 'SET_CURRENT_VALUE', payload: mjml }),
+  // assigning mjml value to current tab
+  setCurrentValue: mjml => dispatch({ type: 'SET_CURRENT_VALUE', payload: mjml }),
 
-    // bind raw actions with dispatch
-    ...bindActionCreators({
+  // bind raw actions with dispatch
+  ...bindActionCreators({
 
-      // add a tab
-      addTab,
+    // add a tab
+    addTab,
 
-      // remove a tab
-      removeTab,
+    // remove a tab
+    removeTab,
 
     }, dispatch),
 
-  })
-)
+}))
 class Editor extends Component {
 
   static contextTypes = {
@@ -85,6 +84,10 @@ class Editor extends Component {
     const {
       showEditor,
     } = this.state
+
+    socket.on('PING_EDITOR', () => {
+      setTimeout(() => socket.emit('event', 'PONG_EDITOR'), 1e3)
+    })
 
     socket.on('send-html-to-preview', () => {
       this.renderHTML(this.getCurrentValue())
@@ -316,8 +319,9 @@ class Editor extends Component {
   render () {
 
     const {
-      tabs,
       editorSize,
+      gist,
+      tabs,
     } = this.props
 
     const {
@@ -335,6 +339,10 @@ class Editor extends Component {
         })}
       >
 
+        <TabActions
+          disabledSave={tabs.size === 0}
+        />
+
         <Tabs>
 
           <Tab
@@ -349,13 +357,12 @@ class Editor extends Component {
 
         </Tabs>
 
-        {tabs.size > 0 && <TabActions />}
-
         <div className="Editor-Wrapper">
 
           {/* -- GIST PANEL -- */}
 
-          <GistPanel />
+          { gist.get('id') &&
+            <GistPanel /> }
 
           {/* -- LEFT PANEL -- */}
 

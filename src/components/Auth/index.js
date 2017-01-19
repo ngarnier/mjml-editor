@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react'
 
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Motion, spring } from 'react-motion'
 import cx from 'classnames'
@@ -14,17 +13,12 @@ import IconGithub from 'icons/Github'
 
 import './styles.scss'
 
-@connect(
-  ({ user }) => ({
-    profile: user.get('profile'),
-  }),
-  dispatch => ({
-    ...bindActionCreators({
-      logout,
-      getRateLimit,
-    }, dispatch),
-  })
-)
+@connect(({ user }) => ({
+  profile: user.get('profile'),
+}), {
+  logout,
+  getRateLimit,
+})
 class Auth extends Component {
 
   static contextTypes = {

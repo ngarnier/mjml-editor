@@ -27,10 +27,19 @@ class Iframe extends Component {
     } = this.context
 
     const {
+      maximize,
       minimize,
     } = this.props
 
+    if (minimize) {
+      socket.emit('event', 'PING_EDITOR')
+    }
+
     socket.emit('event', 'send-html-to-preview')
+
+    socket.on('PONG_EDITOR', () => {
+      setTimeout(() => socket.emit('event', 'PING_EDITOR'), 1e3)
+    })
 
     socket.on('preview-html', ({ preview }) => {
       if (this.iframe) {

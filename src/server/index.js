@@ -1,7 +1,6 @@
 import { Strategy as StrategyGithub } from 'passport-github2'
 import bodyParser from 'body-parser'
 import compression from 'compression'
-import cookieParser from 'cookie-parser'
 import express from 'express'
 import expressSession from 'express-session'
 import favicon from 'serve-favicon'
@@ -66,7 +65,6 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   extended: false,
 }))
-app.use(cookieParser(SESSION_SECRET))
 app.use(session)
 app.use(passport.initialize())
 app.use(passport.session())

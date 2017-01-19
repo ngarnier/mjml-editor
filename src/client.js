@@ -22,6 +22,7 @@ const initialState = window.__INITIAL_STATE__
 initialState.editor = fromJS(initialState.editor)
 initialState.gist = fromJS(initialState.gist)
 initialState.loaders = fromJS(initialState.loaders)
+initialState.modals = fromJS(initialState.modals)
 initialState.notifications = fromJS(initialState.notifications)
 initialState.ratelimit = fromJS(initialState.ratelimit)
 initialState.user = fromJS(initialState.user)

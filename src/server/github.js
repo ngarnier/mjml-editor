@@ -15,6 +15,8 @@ function githubFactory (req, res, next) {
       type: 'token',
       token: accessToken,
     })
+
+    req.isAuth = true
   }
 
   req.githubApi = github
@@ -73,7 +75,7 @@ router.post('/gists', githubFactory, (req, res) => {
 
   let promise
 
-  if (gistID) {
+  if (gistID && req.isAuth) {
 
     const payload = {
       id: gistID,

@@ -12,9 +12,10 @@ import Button from 'components/Button'
 import './style.scss'
 
 @connect(state => ({
-  tab: getActiveTab(state),
   gistID: state.gist.get('id'),
   isSavingGist: isLoading(state, 'SAVE_CURRENT_TO_GIST'),
+  tab: getActiveTab(state),
+  profile: state.user.get('profile'),
 }), {
   saveCurrentTabToGist,
   removeFileFromGist,
@@ -24,9 +25,11 @@ class TabActions extends Component {
   render () {
 
     const {
-      saveCurrentTabToGist,
-      isSavingGist,
+      disabledSave,
       gistID,
+      isSavingGist,
+      profile,
+      saveCurrentTabToGist,
     } = this.props
 
     return (
@@ -35,11 +38,16 @@ class TabActions extends Component {
         <div className="horizontal-list">
 
           <Button
-            success
-            onClick={saveCurrentTabToGist}
+            disabled={disabledSave}
             isLoading={isSavingGist}
+            onClick={saveCurrentTabToGist}
+            success={!disabledSave}
           >
-            {'save'}
+            { gistID
+              ? profile
+                ? 'Save'
+                : 'Fork'
+              : 'Create gist' }
           </Button>
 
           {gistID && (

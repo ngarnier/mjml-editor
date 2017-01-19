@@ -19,7 +19,7 @@ const postcssPlugins = [
   }),
 ]
 
-if (__DEV__) {
+if (globals.__DEV__) {
   postcssPlugins.push(
     cssnano({
       autoprefixer: false,

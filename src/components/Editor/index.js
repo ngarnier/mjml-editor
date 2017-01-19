@@ -86,7 +86,6 @@ class Editor extends Component {
     } = this.state
 
     socket.on('PING_EDITOR', () => {
-      console.log('PING_EDITOR')
       setTimeout(() => socket.emit('event', 'PONG_EDITOR'), 1e3)
     })
 

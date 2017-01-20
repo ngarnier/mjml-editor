@@ -3,7 +3,7 @@ import { fromJS } from 'immutable'
 
 const initialState = fromJS({
   id: null,
-  files: [],
+  files: {},
 })
 
 export default handleActions({
@@ -45,6 +45,8 @@ export default handleActions({
       )
 
   },
+
+  ADD_GIST_FILE: (state, { payload: file }) => state.update('files', files => fromJS(file).merge(files)),
 
   SET_GIST_FILES: (state, { payload: files }) => state.set('files', fromJS(files)),
 

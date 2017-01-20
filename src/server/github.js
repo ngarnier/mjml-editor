@@ -1,6 +1,7 @@
 import express from 'express'
 import GitHubApi from 'github'
 
+import reduce from 'lodash/reduce'
 import values from 'lodash/values'
 
 const router = express.Router()
@@ -70,37 +71,54 @@ router.post('/gists', githubFactory, (req, res) => {
 
   const {
     gistID,
-    tab,
+    files,
   } = req.body
 
   let promise
 
-  if (gistID && req.isAuth) {
-
-    const payload = {
-      id: gistID,
-      files: {
-        [tab.name]: {
-          content: tab.value,
-        },
-      },
-    }
-
-    promise = req.githubApi.gists.edit(payload)
+  // if (gistID && req.isAuth) {
+  //
+  //   const payload = {
+  //     id: gistID,
+  //     files: {
+  //       [tab.name]: {
+  //         content: tab.value,
+  //       },
+  //     },
+  //   }
+  //
+  //   promise = req.githubApi.gists.edit(payload)
+  //
+  // } else {
+  //
+  //   const payload = {
+  //     files: {
+  //       [tab.name]: {
+  //         content: tab.value,
+  //       },
+  //     },
+  //     public: true,
+  //   }
+  //
+  //   promise = req.githubApi.gists.create(payload)
+  //
+  // }
+  console.log(req.body, files)
+  if (gistID) {
 
   } else {
-
     const payload = {
-      files: {
-        [tab.name]: {
-          content: tab.value,
-        },
-      },
+      files: reduce(files, (result, value, key) => {
+        result[key] = {
+          content: 'toto',
+        }
+
+        return result
+      }, {}),
       public: true,
     }
-
+    console.log(payload)
     promise = req.githubApi.gists.create(payload)
-
   }
 
   promise

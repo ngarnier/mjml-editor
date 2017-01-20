@@ -40,7 +40,7 @@ class GistPanelFile extends Component {
   setEditing = () => {
     this.setState({
       isEditing: true,
-      value: this.props.file.get('filename'),
+      value: this.props.file.get('filename').replace('.mjml', ''),
     })
   }
 
@@ -64,9 +64,7 @@ class GistPanelFile extends Component {
       renameFile,
     } = this.props
 
-    const newName = value.endsWith('.mjml')
-      ? value
-      : `${value}.mjml`
+    const newName = value
 
     const oldName = file.get('filename')
 

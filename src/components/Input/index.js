@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 
+import cx from 'classnames'
+
 import './styles.scss'
 
 class Input extends Component {
@@ -14,6 +16,7 @@ class Input extends Component {
 
   render () {
     const {
+      className,
       defaultValue,
       placeholder,
       type,
@@ -21,7 +24,7 @@ class Input extends Component {
     } = this.props
 
     return (
-      <div className="Input">
+      <div className={cx('Input', className)}>
         <input
           defaultValue={defaultValue}
           onChange={this.handleChange}

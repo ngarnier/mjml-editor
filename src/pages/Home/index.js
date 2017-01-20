@@ -36,8 +36,6 @@ class Home extends Component {
 
     if (params.gistID) {
       promises.push(dispatch(loadGist(params.gistID)))
-    } else {
-      dispatch(addTab())
     }
 
     promises.push(dispatch(getRateLimit()))

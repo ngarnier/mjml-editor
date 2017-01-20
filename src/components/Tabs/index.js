@@ -40,12 +40,14 @@ class Tab extends Component {
       onClick,
       onRemove,
       remove,
+      text,
     } = this.props
 
     return (
       <div
         className={cx('Tab', {
           'Tab--float': float,
+          'Tab--text': text,
           'Tab--active': active,
         })}
         onClick={onClick}

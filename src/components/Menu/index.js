@@ -19,7 +19,7 @@ import './styles.scss'
 
 @connect(state => ({
   isLoadingGist: isLoading(state, 'LOAD_GIST'),
-  isMenuOpen: isModalOpen(state, 'OPEN_FILE'),
+  isModalOpenFileOpen: isModalOpen(state, 'OPEN_FILE'),
 }), dispatch => ({
 
   // bind raw actions with dispatch
@@ -47,14 +47,14 @@ class Menu extends Component {
     const {
       closeModal,
       isLoadingGist,
-      isMenuOpen,
+      isModalOpenFileOpen,
     } = this.props
 
     if (isLoadingGist && !nextProps.isLoadingGist) {
       closeModal('OPEN_FILE')
     }
 
-    if (isMenuOpen && !nextProps.isMenuOpen) {
+    if (isModalOpenFileOpen && !nextProps.isModalOpenFileOpen) {
       this.setState({
         gistValue: '',
       })
@@ -63,22 +63,22 @@ class Menu extends Component {
 
   componentDidUpdate () {
     const {
-      isMenuOpen,
+      isModalOpenFileOpen,
     } = this.props
 
-    if (isMenuOpen && this.input) {
+    if (isModalOpenFileOpen && this.input) {
       this.input.focus()
     }
   }
 
-  toggleModalOpen = () => {
+  toggleModalNewGist = () => {
     const {
-      isMenuOpen,
+      isModalOpenFileOpen,
       closeModal,
       openModal,
     } = this.props
 
-    if (isMenuOpen) {
+    if (isModalOpenFileOpen) {
       closeModal('OPEN_FILE')
     } else {
       openModal('OPEN_FILE')
@@ -112,7 +112,7 @@ class Menu extends Component {
   render () {
     const {
       isLoadingGist,
-      isMenuOpen,
+      isModalOpenFileOpen,
     } = this.props
 
     const {
@@ -129,20 +129,21 @@ class Menu extends Component {
         </div>
         <div
           className="Menu-Item"
-          onClick={this.toggleModalOpen}
+          onClick={this.toggleModalNewGist}
         >
           Open gist
         </div>
 
         <Modal
-          onClose={this.toggleModalOpen}
-          isOpened={isMenuOpen}
+          onClose={this.toggleModalNewGist}
+          isOpened={isModalOpenFileOpen}
         >
           <form
-            className="OpenGist"
+            className="horizontal-list"
             onSubmit={this.openGist}
           >
             <Input
+              className="flex-1"
               onChange={this.handleChangeInputGist}
               placeholder="Gist id or gist url"
               ref={r => this.input = r}

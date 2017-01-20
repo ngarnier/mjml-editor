@@ -7,14 +7,20 @@ import { connect } from 'react-redux'
 import cx from 'classnames'
 
 import { addTab, removeTab } from 'actions/editor'
+import { openModal, closeModal } from 'actions/modals'
+
+import { isModalOpen } from 'reducers/modals'
 
 import { Tabs, Tab } from 'components/Tabs'
+import Button from 'components/Button'
 import DragResize from 'components/DragResize'
 import Empty from 'components/Empty'
 import Footer from 'components/Footer'
 import GistPanel from 'components/GistPanel'
+import GistsActions from 'components/GistsActions'
 import Iframe from 'components/Iframe'
-import TabActions from 'components/TabActions'
+import Input from 'components/Input'
+import Modal from 'components/Modal'
 
 import IconAdd from 'icons/Add'
 import IconProgramming from 'icons/Programming'
@@ -33,13 +39,16 @@ if (__BROWSER__) {
 
 import './styles.scss'
 
-@connect(({ gist, editor }) => ({
-  activeTab: editor.get('activeTab'),
-  editorSize: editor.get('editorSize'),
-  gist,
-  tabs: editor.get('tabs'),
+@connect(state => ({
+  activeTab: state.editor.get('activeTab'),
+  editorSize: state.editor.get('editorSize'),
+  gist: state.gist,
+  tabs: state.editor.get('tabs'),
+  isModalNewFileOpen: isModalOpen(state, 'NEW_FILE'),
 }),
 dispatch => ({
+
+  addGistFile: file => dispatch({ type: 'ADD_GIST_FILE', payload: file }),
 
   // set this id as current active tab
   setActiveTab: id => dispatch({ type: 'SET_ACTIVE_TAB', payload: id }),
@@ -56,6 +65,9 @@ dispatch => ({
     // remove a tab
     removeTab,
 
+    openModal,
+    closeModal,
+
     }, dispatch),
 
 }))
@@ -71,6 +83,7 @@ class Editor extends Component {
 
   state = {
     cursor: null,
+    filenameValue: '',
     onResize: false,
     showEditor: this.props.tabs.size > 0,
     showPreview: true,
@@ -105,20 +118,22 @@ class Editor extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-
     const {
       showEditor,
     } = this.state
 
     const {
       activeTab,
+      isModalNewFileOpen,
       tabs,
     } = this.props
 
     const willHideEditor = this.props.activeTab && !nextProps.activeTab
 
     if (willHideEditor) {
-      this.setState({ showEditor: false })
+      this.setState({
+        showEditor: false,
+      })
     }
 
     if (showEditor && !willHideEditor && activeTab !== nextProps.activeTab) {
@@ -131,10 +146,14 @@ class Editor extends Component {
       })
     }
 
+    if (isModalNewFileOpen && !nextProps.isModalNewFileOpen) {
+      this.setState({
+        filenameValue: '',
+      })
+    }
   }
 
   componentWillUpdate (nextProps, nextState) {
-
     const {
       showEditor,
     } = this.state
@@ -151,6 +170,7 @@ class Editor extends Component {
   componentDidUpdate (prevProps) {
     const {
       activeTab,
+      isModalNewFileOpen,
     } = this.props
 
     const {
@@ -159,6 +179,10 @@ class Editor extends Component {
 
     if (showEditor && activeTab !== prevProps.activeTab) {
       this.changeTab()
+    }
+
+    if (isModalNewFileOpen && this.input) {
+      this.input.focus()
     }
   }
 
@@ -184,11 +208,12 @@ class Editor extends Component {
 
   handleTabChange = id => this.props.setActiveTab(id)
 
-  handleTabAdd = () => {
-    this.props.addTab()
-    this.setState({
-      showEditor: true,
-    })
+  handleFileAdd = () => {
+    const {
+      openModal,
+    } = this.props
+
+    openModal('NEW_FILE')
   }
 
   handleTabRemove = (id, e) => {
@@ -204,6 +229,10 @@ class Editor extends Component {
 
     window.open(`/preview/${window.__SOCKET_ROOM__}`, '_blank', 'toolbar=0,menubar=0')
   }
+
+  handleChangeInputFilename = value => this.setState({
+    filenameValue: value,
+  })
 
   saveHistory () {
     const {
@@ -270,6 +299,44 @@ class Editor extends Component {
     this._codeMirror.focus()
   }
 
+  toggleModalNewFile = () => {
+    const {
+      isModalNewFileOpen,
+      closeModal,
+      openModal,
+    } = this.props
+
+    if (isModalNewFileOpen) {
+      closeModal('NEW_FILE')
+    } else {
+      openModal('NEW_FILE')
+    }
+  }
+
+  addFile = e => {
+    const {
+      addGistFile,
+      closeModal,
+    } = this.props
+
+    const {
+      filenameValue,
+    } = this.state
+
+    if (e) { e.preventDefault() }
+
+    const filename = `${filenameValue}.mjml`
+
+    addGistFile({
+      [filename]: {
+        content: '',
+        filename,
+      }
+    })
+
+    closeModal('NEW_FILE')
+  }
+
   renderEditor () {
     const value = this.getCurrentValue()
 
@@ -322,14 +389,18 @@ class Editor extends Component {
       editorSize,
       gist,
       tabs,
+      isModalNewFileOpen,
     } = this.props
 
     const {
       cursor,
+      filenameValue,
       onResize,
       showEditor,
       showPreview,
     } = this.state
+
+    const hasFiles = gist.get('files').size > 0
 
     return (
       <div
@@ -338,16 +409,42 @@ class Editor extends Component {
           'Editor--onResize': showPreview && onResize,
         })}
       >
+        <Modal
+          onClose={this.toggleModalNewFile}
+          isOpened={isModalNewFileOpen}
+        >
+          <form
+            className="horizontal-list"
+            onSubmit={this.addFile}
+          >
+            <Input
+              className="flex-1"
+              onChange={this.handleChangeInputFilename}
+              placeholder="Filename"
+              ref={r => this.input = r}
+              value={filenameValue}
+            />
+            <div className="marginLeft-0">
+              .mjml
+            </div>
+            <div>
+              <Button
+                onClick={this.addFile}
+                // isLoading={isLoadingGist}
+              >
+                Create
+              </Button>
+            </div>
+          </form>
+        </Modal>
 
-        <TabActions
-          disabledSave={tabs.size === 0}
-        />
+        <GistsActions />
 
         <Tabs>
 
           <Tab
             float={true}
-            onClick={this.handleTabAdd}
+            onClick={this.handleFileAdd}
             remove={false}
           >
             <IconAdd />
@@ -361,7 +458,7 @@ class Editor extends Component {
 
           {/* -- GIST PANEL -- */}
 
-          { gist.get('id') &&
+          { hasFiles &&
             <GistPanel /> }
 
           {/* -- LEFT PANEL -- */}

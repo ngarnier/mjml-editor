@@ -3,17 +3,30 @@ import passport from 'passport'
 
 const router = express.Router()
 
-router.get('/login', passport.authenticate('github', {
-  scope: [
-    'user',
-    'gist',
-  ],
-}))
+router.get('/login', (req, res, next) => {
+  req.session.redirect = new Buffer(req.get('Referrer'))
 
-router.get('/login/callback', passport.authenticate('github', {
-  failureRedirect: '/',
-}), (req, res) => {
-  res.redirect('/')
+  passport.authenticate('github', {
+    scope: [
+      'user',
+      'gist',
+    ],
+  })(req, res, next)
+})
+
+router.get('/login/callback', (req, res, next) => {
+  const {
+    redirect,
+  } = req.session
+
+  delete req.session.redirect
+
+  passport.authenticate('github', {
+    failureRedirect: '/',
+    successRedirect: redirect
+      ? new Buffer(redirect, 'base64').toString()
+      : '/'
+  })(req, res, next)
 })
 
 export default router

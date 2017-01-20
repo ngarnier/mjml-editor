@@ -7,7 +7,7 @@ body {
   align-items: center;
 
   > * + * {
-    margin-left: 10px;
+    margin-left: 20px;
   }
 }
 
@@ -20,4 +20,22 @@ body {
   overflow: hidden;
   white-space: pre;
   text-overflow: ellipsis;
+}
+
+.flex {
+  &-1 {
+    flex: 1;
+  }
+}
+
+.margin {
+  &-0 {
+    margin: 0;
+  }
+
+  &Left {
+    &-0 {
+      margin-left: 0;
+    }
+  }
 }

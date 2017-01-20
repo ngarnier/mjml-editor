@@ -46,6 +46,19 @@ export function loadGist (gistID) {
   }
 }
 
+export function createGist () {
+  return {
+    type: 'API:CREATE_GIST',
+    payload: {
+      method: 'post',
+      url: '/github/gists',
+      data: ({ gist }) => ({
+        files: gist.get('files'),
+      }),
+    },
+  }
+}
+
 // save the current opened tab to gist
 // if gist already exists for this session, use it
 // else, create a new gist for it

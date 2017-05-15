@@ -15,6 +15,14 @@ yarn
 
 ### Setup
 
+#### Create an application on Github
+
+In your [applications](https://github.com/settings/applications), register a new app with the following information: 
+- **Homepage URL**: host of the app (`http://127.0.0.1` if running locally)
+- **Authorization callback URL**: authority of the app (`http://127.0.0.1:3333/` if running locally)
+
+#### Configure the app environment
+
 Create a `.env` file as follow:
 
 ```
